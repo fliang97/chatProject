@@ -1,0 +1,40 @@
+package clientProject;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
+
+public class chatClient {
+	private final String serverName;
+	private final int serverPort;
+	private Socket socket;
+	private InputStream serverIn;
+	private OutputStream serverOut;
+	
+	public chatClient(String serverName, int serverPort) {
+		this.serverName = serverName;
+		this.serverPort = serverPort;
+	}
+	
+	public static void main(String[] args) {
+		chatClient client = new chatClient("localhost", 8818);
+		if(!client.connect()) {
+			System.out.println("connection failed");
+		}else {
+			System.out.println("connect successful");
+		}
+	}
+	
+	private boolean connect() {
+		try {
+			this.socket = new Socket(serverName, serverPort);
+			this.serverOut = socket.getOutputStream();
+			this.serverIn = socket.getInputStream();
+			return true;
+		} catch(IOException e){
+			e.printStackTrace();
+		}
+		return false;
+	}
+}

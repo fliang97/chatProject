@@ -1,0 +1,28 @@
+package clientProject;
+
+import java.awt.BorderLayout;
+import java.awt.ScrollPane;
+
+import javax.swing.*;
+
+public class MessagePane extends JPanel{
+	private chatClient client;
+	private String login;
+	
+	private DefaultListModel<String> listModel = new DefaultListModel<>();
+	private JList<String> messageList = new JList<>(listModel);
+	private JTextField inputField = new JTextField();
+	
+
+	public MessagePane(chatClient client, String login) {
+		this.client = client;
+		this.login = login;
+		
+		setLayout(new BorderLayout());
+		add(new JScrollPane(messageList), BorderLayout.CENTER);
+		add(inputField, BorderLayout.SOUTH);
+		
+	}
+
+
+}

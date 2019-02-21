@@ -1,0 +1,52 @@
+package Server;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.Socket;
+import org.apache.commons.lang3;
+
+public class MultipleConnection extends Thread{
+	private Socket clientSocket;
+	
+	MultipleConnection(Socket clientSocket){
+		this.clientSocket = clientSocket;
+	}
+	
+	@Override
+	public void run() {
+		try {
+			enabledMultipleConnection();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void enabledMultipleConnection() throws IOException, InterruptedException {
+		InputStream inputStream = clientSocket.getInputStream();
+		OutputStream outputStream = clientSocket.getOutputStream();
+		
+		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+		String input;
+		while( (input = reader.readLine()) != null) {
+			String[] tokens =null; //StringUtils.split(input);
+			if(tokens != null && tokens.length > 0) {
+				String cmd = tokens[0];
+			
+				if("quit".equalsIgnoreCase(input)) {
+					break;
+				}else {
+					String msg = "unkown" + cmd + "\n";
+					outputStream.write(msg.getBytes());
+				}
+			//String msg = "you type: " + input + "\n";
+			//outputStream.write(msg.getBytes());
+			}
+		}
+		clientSocket.close();
+	}
+}

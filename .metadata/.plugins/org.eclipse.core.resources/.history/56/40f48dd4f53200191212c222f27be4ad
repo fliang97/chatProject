@@ -1,0 +1,34 @@
+package Monitor;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import GUI.SignUpWindow;
+import clientProject.LoginWindow;
+
+public class SignUpMonitor implements ActionListener{
+	private LoginWindow lw;
+	private SignUpWindow swu;
+	
+	public SignUpMonitor(SignUpWindow swu) {
+		this.swu = swu;
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		int command = Integer.parseInt(e.getActionCommand());
+		switch (command) {
+		case 1:
+			//TO DO SIGN UP BUTTON
+			String account = swu.getAccount().getText();
+			String password = swu.getPassword().getText();
+			String userName = swu.getUserName().getText();
+			String profile = swu.getProfile().getText();
+			System.out.println("account: " + account + " " + "password: " + password);
+		case 2:
+			//TO DO BACK BUTTON
+			this.swu.setVisible(false);
+			this.lw = new LoginWindow();
+		}
+	}
+}

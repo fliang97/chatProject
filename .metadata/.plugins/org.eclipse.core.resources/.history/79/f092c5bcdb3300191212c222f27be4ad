@@ -1,0 +1,23 @@
+package Monitor;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JFrame;
+
+import GUI.AllFriendStatusWindow;
+
+public class AllFriendStatusMonitor implements ActionListener{
+	private String account;
+	
+	public AllFriendStatusMonitor(String account) {
+		this.account = account;
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent a) {
+		AllFriendStatusWindow afsw = new AllFriendStatusWindow();
+		afsw.launchWindow(account);
+	}
+
+}

@@ -1,0 +1,7 @@
+INDEX VERSION 1.131+/Users/liangfujie/Downloads/cs176b/project/newproject/.metadata/.plugins/org.eclipse.jdt.core
+2039221942.index
+161789481.index
+1954396819.index
+2116342853.index
+72023108.index
+941005215.index

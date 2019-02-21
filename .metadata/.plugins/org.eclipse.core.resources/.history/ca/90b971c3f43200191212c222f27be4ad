@@ -1,0 +1,28 @@
+package Monitor;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import GUI.SignUpWindow;
+import clientProject.LoginWindow;
+
+public class SignUpMonitor implements ActionListener{
+	private LoginWindow lw;
+	private SignUpWindow swu;
+	
+	public SignUpMonitor(SignUpWindow swu) {
+		this.swu = swu;
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		int command = Integer.parseInt(e.getActionCommand());
+		switch (command) {
+		case 1:
+			//TO DO
+		case 2:
+			this.swu.setVisible(false);
+			this.lw = new LoginWindow();
+		}
+	}
+}

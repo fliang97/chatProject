@@ -1,0 +1,63 @@
+package Monitor;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+
+import javax.sql.*;
+import javax.swing.JOptionPane;
+
+import GUI.SignUpWindow;
+import clientProject.LoginWindow;
+
+
+public class SignUpMonitor implements ActionListener{
+	private LoginWindow lw;
+	private SignUpWindow swu;
+	
+	public SignUpMonitor(SignUpWindow swu) {
+		this.swu = swu;
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		int command = Integer.parseInt(e.getActionCommand());
+		switch (command) {
+		case 1:
+			//TO DO SIGN UP BUTTON
+			String account = swu.getAccount().getText();
+			String password = swu.getPassword().getText();
+			String userName = swu.getUserName().getText();
+			String profile = swu.getProfile().getText();
+
+			String driver = "com.mysql.cj.jdbc.Driver";
+			String url = "jdbc:mysql://127.0.0.1:3306/cs176bproject?";
+			String sqlName = "root";
+			String sqlPassword = "fujie19970";
+			try {
+				Class.forName(driver);
+				System.out.println("Connecting to database server");
+			
+				Connection conn =  DriverManager.getConnection(url, sqlName, sqlPassword);
+				System.out.println("Connect Successful");
+				
+				String sql_sign_up = "INSERT INTO ClientInfo (Aid , Password, Status, UserName, Profile) VALUES ('" + account + "', '" + password + "', '0' ,'" + userName + "','" + profile + "')";
+				PreparedStatement insert = conn.prepareStatement(sql_sign_up);
+				insert.executeUpdate();
+				JOptionPane.showMessageDialog(null, "Sign Up Successful! ", "", JOptionPane.PLAIN_MESSAGE);
+			}catch(Exception ex) {
+				System.out.println(ex);
+			}finally {
+				//conn.close();
+			}
+			
+			
+		case 2:
+			//TO DO BACK BUTTON
+			this.swu.setVisible(false);
+			this.lw = new LoginWindow();
+		}
+	}
+}

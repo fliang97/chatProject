@@ -1,0 +1,19 @@
+package GUI;
+
+import java.awt.BorderLayout;
+
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+
+public class AllFriendStatusPane extends JPanel{
+	private DefaultListModel<String> listModel = new DefaultListModel<>();
+	private JList<String> FriendList = new JList<>(listModel);
+	
+	
+	public AllFriendStatusPane() {
+		setLayout(new BorderLayout());
+		add(new JScrollPane(FriendList), BorderLayout.CENTER);
+	}
+}

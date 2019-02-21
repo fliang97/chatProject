@@ -1,0 +1,24 @@
+package test;
+
+import java.sql.*;
+
+public class sql {
+
+	public static void main(String args[]){  
+		try{  
+			String driver = "com.mysql.jdbc.Driver";
+			String url = "jdbc:mysql://128.0.0.1:3306/cs176bproject";
+			String userName = "root";
+			String password = "fujie19970";
+			//Class.forName(driver);
+			//Connection conn = DriverManager.getConnection(url, userName, password);
+			System.out.println("connect successful");
+			//here sonoo is database name, root is username and password  
+			//Statement stmt=conn.createStatement();  
+			//ResultSet rs=stmt.executeQuery("DROP TABLE Customer1");  
+			//while(rs.next())  
+			//	System.out.println(rs.getInt(1)+"  "+rs.getString(2)+"  "+rs.getString(3));  
+			//conn.close();  
+		}catch(Exception e){ System.out.println(e);}  
+		}  
+}
