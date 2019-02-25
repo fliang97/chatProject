@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename type &apos;DB.LoginDB&apos; to &apos;LoginCheckDB&apos;&#x0A;- Original project: &apos;Project&apos;&#x0A;- Original element: &apos;DB.LoginDB&apos;&#x0A;- Renamed element: &apos;DB.LoginCheckDB&apos;&#x0A;- Update references to refactored element&#x0A;- Update textual occurrences in comments and strings" description="Rename type &apos;LoginDB&apos;" flags="589830" id="org.eclipse.jdt.ui.rename.type" input="/src&lt;DB{LoginDB.java[LoginDB" matchStrategy="1" name="LoginCheckDB" qualified="false" references="true" similarDeclarations="false" stamp="1550715364172" textual="false" version="1.0"/>
+</session>

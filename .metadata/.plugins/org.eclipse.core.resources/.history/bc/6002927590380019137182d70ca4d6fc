@@ -1,0 +1,21 @@
+package Monitor;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import clientProject.UserListPane;
+import clientProject.chatClient;
+
+public class DeleteFriendMonitor implements ActionListener{
+	private UserListPane ulp;
+	private chatClient client;
+	
+	public DeleteFriendMonitor(UserListPane ulp, chatClient client) {
+		this.ulp = ulp;
+		this.client = client;
+	}
+
+	public void actionPerformed(ActionEvent a) {
+		System.out.println("Are you going to delete: " + ulp.getSelectedValue());
+	}
+}

@@ -1,0 +1,21 @@
+package Monitor;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import GUI.AddFriendWindow;
+
+public class AddFriendMonitor implements ActionListener{
+	 
+	
+	public AddFriendMonitor() {
+		
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent a){
+		AddFriendWindow afw = new AddFriendWindow();
+		afw.launchAddFriendWindow();
+	}
+
+}

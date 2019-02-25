@@ -14,38 +14,19 @@ import javax.swing.JFrame;
 
 import Monitor.AllFriendStatusMonitor;
 import clientProject.UserListPane;
+import clientProject.chatClient;
 
 public class AllFriendStatusWindow extends JFrame{
 
 
 	
-	public void launchWindow(String account) {
+	public void launchWindow(String account, chatClient client) {
 		
 		this.getContentPane().setLayout(new BoxLayout(this.getContentPane(),BoxLayout.Y_AXIS));
 		this.setTitle("Friend Status");
 	
-		String driver = "com.mysql.cj.jdbc.Driver";
-		String url = "jdbc:mysql://127.0.0.1:3306/cs176bproject?";
-		String sqlName = "root";
-		String sqlPassword = "fujie19970";
-		Connection conn = null;
-		Statement stmt = null;
-		
-		OnlineFriendStatusPane afsp = null;
-		
-		try {
-			Class.forName(driver);
-			System.out.println("Connecting to database server");
-	
-			conn =  DriverManager.getConnection(url, sqlName, sqlPassword);
-			System.out.println("Connect Successful");
-			stmt = conn.createStatement();	
-		
-			afsp = new OnlineFriendStatusPane(account, conn, stmt);
-		}catch(Exception ex) {
-			ex.printStackTrace();
-		}
-		
+		OnlineFriendStatusPane afsp = new OnlineFriendStatusPane(client);
+			
 		afsp.setPreferredSize(new Dimension(400, 500));
 		
 		this.setLayout(new FlowLayout());

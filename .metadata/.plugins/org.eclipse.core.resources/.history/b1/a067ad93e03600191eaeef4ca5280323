@@ -1,0 +1,142 @@
+package Monitor;
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.sql.*;
+
+import javax.swing.*;
+
+import org.apache.commons.lang3.StringUtils;
+
+import clientProject.LoginWindow;
+import clientProject.UserListPane;
+import clientProject.chatClient;
+import GUI.SignUpWindow;
+
+
+public class LoginMonitor extends JFrame implements ActionListener{
+	private LoginWindow loginWindow;
+	private chatClient client;
+	private Connection conn = null;
+	private Statement stmt = null;
+	
+	public Connection getConn() {
+		return conn;
+	}
+	
+	public Statement getStmt() {
+		return stmt;
+	}
+	
+	public LoginMonitor(LoginWindow loginWindow, chatClient client) {
+		this.loginWindow  = loginWindow;
+		this.client = client;
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {	
+		int command = Integer.parseInt(e.getActionCommand());
+		switch(command) {
+		case 1:
+			
+			doLogin();
+			break;
+			
+		case 2:
+			this.loginWindow.setVisible(false);
+			SignUpWindow suw = new SignUpWindow();
+			suw.launchSignUpWindow(client);
+			break;
+		}
+
+
+		
+	}
+
+	private void doLogin() {
+		
+		String login = this.loginWindow.getLoginField().getText();
+		String password = this.loginWindow.getJPasswordField().getText();	
+		
+		try {
+			if(client.login(login, password)) {
+				UserListPane userListPane = new UserListPane(this.client, conn, stmt, login);
+				//UserListPane userListPane = new UserListPane(client, login, password);
+				userListPane.setPreferredSize(new Dimension(400, 500));
+				JFrame frame = new JFrame("Users List");
+				frame.setLayout(new FlowLayout());
+				JLabel friendList = new JLabel("online friend: ");
+				frame.add(friendList);
+				frame.setResizable(false);
+		        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				frame.setSize(400, 800);
+				
+				frame.getContentPane().add(userListPane, BorderLayout.CENTER);
+				
+				JButton listFriend = new JButton("All Friend Status");
+				AllFriendStatusMonitor afsw = new AllFriendStatusMonitor(login);
+				listFriend.setActionCommand("1");
+				listFriend.addActionListener(afsw);
+				frame.add(listFriend);
+				
+				JButton addFriend = new JButton("Add Friend");
+				frame.add(addFriend);
+				
+				JButton profile = new JButton("Edit Profile");
+				frame.add(profile);
+				
+				JButton logOff = new JButton("Log Off");
+				LogOffMonitor lm = new LogOffMonitor(this.client, userListPane, frame, conn, stmt, login);
+				logOff.setActionCommand("1");
+				logOff.addActionListener(lm);
+				frame.add(logOff);
+				
+				JButton quit = new JButton("Quit");
+				quit.setActionCommand("2");
+				quit.addActionListener(lm);
+				frame.add(quit);
+				
+				String line;
+				System.out.println("whyhwyhywhy");
+				
+				BufferedReader bufferedIn = new BufferedReader(new InputStreamReader(this.client.getServerIn()));
+				while((line = bufferedIn.readLine()) != null ) {
+					String[] tokens = StringUtils.split(line);
+					if(tokens != null && tokens.length > 0) {
+						String cmd = tokens[0];
+						System.out.println(line);
+						if("succeed".equalsIgnoreCase(cmd)) {
+							System.out.println("gun");
+							frame.setVisible(false);
+							JOptionPane.showMessageDialog(null, "logOff succeed! ", "", JOptionPane.PLAIN_MESSAGE);
+							break;
+						}
+					}
+				}
+				
+				
+				
+				
+				
+				
+				frame.setVisible(true);
+				//bring up the user window
+				loginWindow.setVisible(false);
+			}else {
+				//show err message
+				JOptionPane.showMessageDialog(this, "Invalid login/password");
+			}
+		}catch(IOException e) {
+			e.printStackTrace();
+		}	
+	}
+	
+	
+
+}

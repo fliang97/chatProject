@@ -1,0 +1,74 @@
+package clientProject;
+
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import javax.swing.*;
+
+import Monitor.LoginMonitor;
+
+public class LoginWindow extends JFrame{
+	private static final long serialVersionUID = 1L;
+
+	private chatClient client;
+	private JTextField loginField;// = new JTextField();
+	private JPasswordField passwordField;// = new JPasswordField();
+	private JButton loginButton = new JButton("login");
+	
+	public JTextField getLoginField() {
+		return loginField;
+	}
+	
+	public JPasswordField getJPasswordField() {
+		return passwordField;
+	}
+	
+	public LoginWindow() {
+		this.getContentPane().setLayout(new BoxLayout(this.getContentPane(),BoxLayout.Y_AXIS));
+		this.setTitle("chatMate");
+		this.setLayout(new FlowLayout());
+		this.setSize(500, 500);
+		this.setResizable(false);
+		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.setLocationRelativeTo(null);
+		JLabel userLabel = new JLabel("Account: ");
+		JLabel pwdLabel = new JLabel("Password: ");
+		this.add(userLabel);
+		Dimension dim = new Dimension(160, 20);
+		this.loginField = new JTextField();
+		this.loginField.setPreferredSize(dim);
+		this.add(this.loginField);
+		this.add(pwdLabel);
+		this.passwordField = new JPasswordField();
+		this.passwordField.setPreferredSize(dim);
+		this.add(this.passwordField);
+		
+		
+		this.client = new chatClient("localhost", 8818);
+		client.connect();
+		
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+
+		
+		LoginMonitor lm = new LoginMonitor(this, client);
+		loginButton.setActionCommand("1");
+		loginButton.addActionListener(lm);
+		this.add(loginButton);
+		
+		JButton signUpButton = new JButton("Sign up");
+		signUpButton.setActionCommand("2");
+		signUpButton.addActionListener(lm);
+		this.add(signUpButton);
+
+		pack();
+		
+		setVisible(true);
+	}
+	
+
+
+	public static void main(String[] args) {
+		LoginWindow lw = new LoginWindow();
+		lw.setVisible(true);
+	}
+}

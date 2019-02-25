@@ -3,6 +3,9 @@ package Server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,8 +17,34 @@ public class Server extends Thread{
 	private final int serverPort;
 	private ArrayList<MultipleConnection> connectionList = new ArrayList<>();
 	
+	private Connection conn;
+	private Statement stmt;
+	
 	public Server(int serverPort) {
 		this.serverPort = serverPort;
+		String driver = "com.mysql.cj.jdbc.Driver";
+		String url = "jdbc:mysql://127.0.0.1:3306/cs176bproject?";
+		String sqlName = "root";
+		String sqlPassword = "fujie19970";
+		
+		try {
+			Class.forName(driver);
+			System.out.println("Connecting to database server");
+	
+			this.conn =  DriverManager.getConnection(url, sqlName, sqlPassword);
+			System.out.println("Connect Successful");
+			this.stmt = conn.createStatement();	
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public Connection getConn() {
+		return this.conn;
+	}
+	
+	public Statement getStmt() {
+		return this.stmt;
 	}
 	
 	public List<MultipleConnection> getConnectionList(){
@@ -30,7 +59,7 @@ public class Server extends Thread{
 				System.out.println("about to accept connection");
 				Socket clientSocket = serverSocket.accept();
 				System.out.println("Accepted connection from " + clientSocket);
-				MultipleConnection mc = new MultipleConnection(this, clientSocket);
+				MultipleConnection mc = new MultipleConnection(this, clientSocket, conn, stmt);
 				connectionList.add(mc);
 				mc.start();
 			} 

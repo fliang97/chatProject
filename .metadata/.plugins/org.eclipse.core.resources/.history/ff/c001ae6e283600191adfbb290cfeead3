@@ -1,0 +1,5 @@
+package clientProject;
+
+public interface ReadMessageLoop {
+
+}

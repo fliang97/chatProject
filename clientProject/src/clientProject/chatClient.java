@@ -9,6 +9,11 @@ import java.net.Socket;
 import java.util.ArrayList;
 import org.apache.commons.lang3.*;
 
+import Listener.AddFriendRequestListener;
+import Listener.AddFriendWindowListener;
+import Listener.AllFriendStatusListener;
+import Monitor.LogOffMonitor;
+
 public class chatClient {
 	private final String serverName;
 	private final int serverPort;
@@ -16,9 +21,35 @@ public class chatClient {
 	private InputStream serverIn;
 	private OutputStream serverOut;
 	private BufferedReader bufferedIn;
+	private String result = "";
 	
 	private ArrayList<UserStatusListener> userStatusListeners = new ArrayList<>();
 	private ArrayList<MessageListener> messageListeners = new ArrayList<>();
+	private ArrayList<AllFriendStatusListener>  allFriendStatusListener = new ArrayList<>();
+	private ArrayList<AddFriendWindowListener>  addFriendWindowListener = new ArrayList<>();
+	private ArrayList<AddFriendRequestListener>  addFriendRequestListener = new ArrayList<>();
+	
+	
+	
+	public InputStream getServerIn() {
+		return serverIn;
+	}
+	
+	public Socket getSocket() {
+		return socket;
+	}
+	
+	public String getResult() {
+		return result;
+	}
+	
+	public OutputStream getOutputStream() {
+		return serverOut;
+	}
+	
+	public BufferedReader getBufferedReader() {
+		return this.bufferedIn;
+	} 
 	
 	public chatClient(String serverName, int serverPort) {
 		this.serverName = serverName;
@@ -46,6 +77,25 @@ public class chatClient {
 			}
 		});
 		
+		client.addAllFriendStatusListener(new AllFriendStatusListener() {
+			@Override
+			public void showFriendStatus(String information) {
+				System.out.println("Client Information: " + information);
+			}
+		});
+		
+		client.addAddFriendWindowListener(new AddFriendWindowListener() {
+			@Override
+			public void showWindow(String result) {}
+		});
+		
+		client.addAddFriendRequestListener(new AddFriendRequestListener(){
+			@Override
+			public void evokeRequestWindow(String fromlogin) {}
+			
+			public void evokeDeleteResultWindow(String result) {}
+		});
+		
 		if(!client.connect()) {
 			System.out.println("connection failed");
 		}else {
@@ -62,7 +112,10 @@ public class chatClient {
 	public void logoff() throws IOException{
 		String cmd = "logoff\n";
 		serverOut.write(cmd.getBytes());
+				
 	}
+	
+
 	
 	public boolean login(String login, String password) throws IOException {
 		// TODO Auto-generated method stub
@@ -91,10 +144,12 @@ public class chatClient {
 		t.start();
 	}
 	
-	private void readMessageLoop() {
+	
+	public void readMessageLoop() {
 		try {
 			String line;
 			while((line = bufferedIn.readLine()) != null) {
+				System.out.println("Received: " + line);
 				String[] tokens = StringUtils.split(line);
 				if(tokens != null && tokens.length > 0) {
 					String cmd = tokens[0];
@@ -103,8 +158,22 @@ public class chatClient {
 					}else if("offline".equalsIgnoreCase(cmd)) {
 						handleOffline(tokens);
 					}else if("msg".equalsIgnoreCase(cmd)) {
-						String[] tokensMsg = StringUtils.split(line, null, 3);
+						System.out.println("received message");
+						String[] tokensMsg = StringUtils.split(line, null, 4);
 						handleMessage(tokensMsg);
+					}else if("succeed".equalsIgnoreCase(cmd)) {
+						break;
+					}else if("getfriendoffline".equalsIgnoreCase(cmd)) {
+						this.result = tokens[1];
+					}else if("allfriendstatus".equalsIgnoreCase(cmd)) {
+						String[] tokensMsg = StringUtils.split(line, null, 4);
+						HandleAllFriendStatus(tokensMsg);
+					}else if("Addfriendresult".equalsIgnoreCase(cmd)) {
+						returnAddFriendResult(tokens);
+					}else if("AddFriendRequest".equalsIgnoreCase(cmd)) {
+						returnIfFriend(tokens);
+					}else if("deletefriendresult".equalsIgnoreCase(cmd)) {
+						promtSucceedPane(tokens);
 					}
 				}
 			}
@@ -118,12 +187,54 @@ public class chatClient {
 		}
 	}
 	
+
+
+	private void promtSucceedPane(String[] tokens) {
+		for(AddFriendRequestListener listener : addFriendRequestListener) {
+			listener.evokeDeleteResultWindow(tokens[1]);
+		}
+		
+	}
+
+	private void returnIfFriend(String[] tokens) {
+		for(AddFriendRequestListener listener : addFriendRequestListener) {
+			listener.evokeRequestWindow(tokens[1]);
+		}
+	}
+
+	private void returnAddFriendResult(String[] tokens) {
+		String result = "";
+		if(tokens.length == 1) {
+			result = "****fail****";
+		}else {
+			result = tokens[1];
+		}
+		for(AddFriendWindowListener listener : addFriendWindowListener) {
+			listener.showWindow(result);
+		}
+		
+	}
+
+	private void HandleAllFriendStatus(String[] tokensMsg) {
+		// TODO Auto-generated method stub
+		String login = tokensMsg[1];
+		login = login + " " + tokensMsg[2] + " " + tokensMsg[3];
+		System.out.println("login: " + login);
+		System.out.println("AllFriendStatus size: " + allFriendStatusListener.size());
+		for(AllFriendStatusListener listener : allFriendStatusListener) {
+			listener.showFriendStatus(login);
+		}
+		
+	}
+
 	private void handleMessage(String[] tokensMsg) {
 		String login = tokensMsg[1];
-		String msg = tokensMsg[2];
+		String userName = tokensMsg[2];
+		String msg = tokensMsg[3];
+		//String msg = tokensMsg[2];
 		
 		for(MessageListener listener : messageListeners) {
-			listener.onMessage(login, msg);
+			listener.onMessage(userName, msg);
 		}
 	}
 	
@@ -135,9 +246,9 @@ public class chatClient {
 	}
 	
 	private void handleOffline(String[] tokens) {
-		String login = tokens[1];
+		String userName = tokens[2];
 		for(UserStatusListener listener : userStatusListeners) {
-			listener.offline(login);
+			listener.offline(userName);
 		}
 	}
 
@@ -170,4 +281,29 @@ public class chatClient {
 	public void removeMessageListener(MessageListener listener) {
 		messageListeners.remove(listener);
 	}
+	
+	public void addAllFriendStatusListener(AllFriendStatusListener listener) {
+		allFriendStatusListener.add(listener);
+	}
+	
+	public void removeAllFriendStatusListener(AllFriendStatusListener listener) {
+		allFriendStatusListener.remove(listener);
+	}
+	
+	public void addAddFriendWindowListener(AddFriendWindowListener listener) {
+		addFriendWindowListener.add(listener);
+	}
+	
+	public void removeAddFriendWindowListener(AddFriendWindowListener listener) {
+		addFriendWindowListener.remove(listener);
+	}
+	
+	public void addAddFriendRequestListener(AddFriendRequestListener listener) {
+		addFriendRequestListener.add(listener);
+	}
+	
+	public void removeAddFriendRequestListener(AddFriendRequestListener listener) {
+		addFriendRequestListener.remove(listener);
+	}
+
 }

@@ -1,0 +1,146 @@
+package Monitor;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import javax.swing.JFrame;
+
+import org.apache.commons.lang3.StringUtils;
+
+import clientProject.LoginWindow;
+import clientProject.UserListPane;
+import clientProject.chatClient;
+import clientProject.ReadMessageLoop;
+
+public class LogOffMonitor implements ActionListener{
+	private chatClient client;
+	private UserListPane usp;
+	private JFrame frame;
+	private Connection conn;
+	private Statement stmt;
+	private String login;
+	private String signal = "";
+
+	public LogOffMonitor(chatClient client, UserListPane usp, JFrame frame, Connection conn, Statement stmt, String login) {
+		this.client = client;
+		this.usp = usp;
+		this.frame = frame;
+		this.conn = conn;
+		this.stmt = stmt;
+		this.login = login;
+	}
+	
+
+	
+	@Override
+	public void actionPerformed(ActionEvent a){
+		int command = Integer.parseInt(a.getActionCommand());
+		switch (command) {
+		case 1:
+			try{
+				this.client.logoff();
+
+				try {
+					String line;
+					System.out.println("whyhwyhywhy");
+					BufferedReader bufferedIn = new BufferedReader(new InputStreamReader(this.client.getServerIn()));
+
+					while((line = bufferedIn.readLine()) != null ) {
+						System.out.println("Received:ReceivedReceivedReceivedReceived " + line);
+						String[] tokens = StringUtils.split(line);
+						if(tokens != null && tokens.length > 0) {
+							String cmd = tokens[0];
+							if("succeed".equalsIgnoreCase(cmd)) {
+								this.signal = "succeed";	
+								System.out.println("signalsignalsignalsignalsignalsignalsignal");
+								break;
+							}
+						}
+					}
+					System.out.println("line is " + line);
+
+				}catch(Exception ex){
+					ex.printStackTrace();
+					try {
+						this.client.getSocket().close();
+					}catch(IOException e){
+						e.printStackTrace();
+					}
+				}
+				if(this.signal.equalsIgnoreCase("succeed")){
+					this.frame.setVisible(false);
+					LoginWindow lw = new LoginWindow();
+				}
+				
+			}catch(IOException e) {
+				e.printStackTrace();
+			}
+			/*String msg = "logoff\n";
+			try {
+				client.getOutputStream().write(msg.getBytes());
+				System.out.println(msg);
+				String response = client.getBufferedReader().readLine();
+				System.out.println(msg);
+				if(response.equalsIgnoreCase("succeed")) {
+					this.frame.setVisible(false);
+					LoginWindow lw = new LoginWindow();
+				}
+				else {
+					
+				}
+				
+			} catch (IOException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}*/
+			
+			//this.frame.setVisible(false);
+			//LoginWindow lw = new LoginWindow();
+			break;
+			
+		case 2:
+			
+				//logOff();
+			
+			this.frame.setVisible(false);
+			//System.exit(0);
+			break;
+		}
+	}
+	
+	public void readMessageLoop() {
+		System.out.println("okokookokooko");
+		try {
+			String line;
+			System.out.println("whyhwyhywhy");
+			BufferedReader bufferedIn = new BufferedReader(new InputStreamReader(this.client.getServerIn()));
+			while((line = this.client.getBufferedReader().readLine()) != null && !this.client.getBufferedReader().ready()) {
+				System.out.println("Received: " + line);
+				String[] tokens = StringUtils.split(line);
+				if(tokens != null && tokens.length > 0) {
+					String cmd = tokens[0];
+					if("succeed".equalsIgnoreCase(cmd)) {
+						this.signal = "succeed";	
+						System.out.println("cmd");
+					}
+				}
+			}
+		}catch(Exception ex){
+			ex.printStackTrace();
+			try {
+				this.client.getSocket().close();
+			}catch(IOException e){
+				e.printStackTrace();
+			}
+		}
+	}
+}
+	
+	

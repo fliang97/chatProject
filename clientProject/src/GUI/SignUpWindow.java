@@ -11,6 +11,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import Monitor.SignUpMonitor;
+import clientProject.chatClient;
 
 public class SignUpWindow extends JFrame{
 	private JTextField account;
@@ -34,7 +35,7 @@ public class SignUpWindow extends JFrame{
 		return profile;
 	}
 	
-	public void launchSignUpWindow() {
+	public void launchSignUpWindow(chatClient client) {
 		this.getContentPane().setLayout(new BoxLayout(this.getContentPane(),BoxLayout.Y_AXIS));
 		this.setTitle("chatMate");
 		this.setLayout(new FlowLayout());
@@ -65,7 +66,7 @@ public class SignUpWindow extends JFrame{
 		this.add(profile);
 		
 		JButton signUp = new JButton("Confirm");
-		SignUpMonitor sum = new SignUpMonitor(this);
+		SignUpMonitor sum = new SignUpMonitor(this, client);
 		signUp.setActionCommand("1");
 		signUp.addActionListener(sum);
 		this.add(signUp);

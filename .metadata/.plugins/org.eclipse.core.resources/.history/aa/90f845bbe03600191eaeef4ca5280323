@@ -1,0 +1,79 @@
+package GUI;
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+
+import Monitor.AllFriendStatusMonitor;
+import Monitor.LogOffMonitor;
+import clientProject.LoginWindow;
+import clientProject.UserListPane;
+import clientProject.chatClient;
+
+public class MainWindow extends JFrame{
+	private LoginWindow lw;
+	private chatClient client;
+	private String login;
+
+	public MainWindow(LoginWindow lw, chatClient client, String login) {
+		this.lw = lw;
+		this.client = client;
+		this.login = login;
+	}
+	
+	public void launchMainWindow() throws SQLException {
+		
+		UserListPane userListPane = new UserListPane(this.client, login);
+		//UserListPane userListPane = new UserListPane(client, login, password);
+		userListPane.setPreferredSize(new Dimension(400, 500));
+		JFrame frame = new JFrame("Users List");
+		frame.setLayout(new FlowLayout());
+		JLabel friendList = new JLabel("online friend: ");
+		frame.add(friendList);
+		frame.setResizable(false);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setSize(400, 800);
+		
+		frame.getContentPane().add(userListPane, BorderLayout.CENTER);
+		
+		JButton listFriend = new JButton("All Friend Status");
+		AllFriendStatusMonitor afsw = new AllFriendStatusMonitor(login);
+		listFriend.setActionCommand("1");
+		listFriend.addActionListener(afsw);
+		frame.add(listFriend);
+		
+		JButton addFriend = new JButton("Add Friend");
+		frame.add(addFriend);
+		
+		JButton profile = new JButton("Edit Profile");
+		frame.add(profile);
+		
+		JButton logOff = new JButton("Log Off");
+		LogOffMonitor lm = new LogOffMonitor(this.client, userListPane, frame, login);
+		logOff.setActionCommand("1");
+		logOff.addActionListener(lm);
+		frame.add(logOff);
+		
+		JButton quit = new JButton("Quit");
+		quit.setActionCommand("2");
+		quit.addActionListener(lm);
+		frame.add(quit);
+	
+		
+		
+		
+		
+		
+		
+		frame.setVisible(true);
+		//bring up the user window
+		this.lw.setVisible(false);
+	}
+}

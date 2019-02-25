@@ -1,0 +1,27 @@
+package DB;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class HandleFriendOfflineDB {
+	private Connection conn;
+	private String[] tokens;
+	
+	public HandleFriendOfflineDB(String[] tokens, Connection conn) {
+		this.conn = conn;
+		this.tokens = tokens;
+	}
+	
+	public String getUserName() throws SQLException {
+		Statement stmt = conn.createStatement();
+		String login = tokens[1];
+		String sql_getUserName = "SELECT * FROM ClientInfo WHERE Aid = '" + login + "'";
+		ResultSet rs2 = stmt.executeQuery(sql_getUserName);
+		rs2.next();
+		login = rs2.getString("UserName");
+
+		return login;
+	} 
+}

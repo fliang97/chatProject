@@ -1,0 +1,17 @@
+package GUI;
+
+import javax.swing.JPanel;
+
+import Listener.AddFriendWindowListener;
+
+public class ShowFriendPane extends JPanel implements AddFriendWindowListener{
+
+	
+	
+	
+	
+	@Override
+	public void showWindow() {
+		
+	}
+}

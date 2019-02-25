@@ -1,0 +1,35 @@
+package Monitor;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+
+import javax.swing.JOptionPane;
+
+import clientProject.UserListPane;
+import clientProject.chatClient;
+
+public class DeleteFriendMonitor implements ActionListener{
+	private UserListPane ulp;
+	private chatClient client;
+	
+	public DeleteFriendMonitor(UserListPane ulp, chatClient client) {
+		this.ulp = ulp;
+		this.client = client;
+	}
+
+	public void actionPerformed(ActionEvent a) {
+		String msg = "Are you going to delete your friend " + ulp.getUserListUI().getSelectedValue() + "?";
+		int reply = JOptionPane.showConfirmDialog(null,
+				msg, "Delete Friend", JOptionPane.YES_NO_OPTION);
+		if(reply == JOptionPane.YES_OPTION) {
+			String outmsg = "deleteFriend " + ulp.getUserListUI().getSelectedValue() + "\n";
+			try {
+				this.client.getOutputStream().write(outmsg.getBytes());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+}

@@ -1,0 +1,47 @@
+package DB;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class HandleGetFriendDB {
+	private Connection conn;
+	private String[] tokens;
+	private Statement stmt;
+
+	public HandleGetFriendDB(String[] tokens, Connection conn, Statement stmt) {
+		this.tokens = tokens;
+		this.conn = conn;
+		this.stmt = stmt;
+	}
+	
+	@SuppressWarnings("finally")
+	public String friendUserName() throws SQLException {
+		String userName = "";
+		try {
+			String Aid_1 = tokens[1];
+			String login = tokens[2];
+
+	
+			String sql_checkIfFriend  = "SELECT * FROM FriendStatus WHERE Aid_1 = '" + Aid_1 + "'"; 
+			ResultSet rs2 = stmt.executeQuery(sql_checkIfFriend);
+			while(rs2.next()) {
+				if(rs2.getString("Aid_2").equals(login)) {
+					String sql_getUserName = "SELECT * FROM ClientInfo WHERE Aid = '" + login + "'";
+					ResultSet rs3 = stmt.executeQuery(sql_getUserName);
+					rs3.next();
+					userName = rs3.getString("UserName");
+					//userListModel.addElement(rs3.getString("UserName"));
+					rs3.close();
+				}
+			}
+			rs2.close();
+		}catch(Exception e) {
+			e.printStackTrace();
+		}finally {
+			if(userName.equalsIgnoreCase("")) return "error";
+			else return userName;
+		}
+	}
+}

@@ -1,0 +1,38 @@
+package DB;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+
+public class GetClientInfoDB {
+	private String login;
+	private Connection conn;
+
+	public GetClientInfoDB(Connection conn) {
+		this.conn = conn;
+	}
+	
+	public String getLogin(String userName) throws SQLException {
+		Statement stmt = conn.createStatement();
+		String sql_getLogin = "SELECT * FROM ClientInfo WHERE UserName = '" + userName + "'";
+		ResultSet rs = stmt.executeQuery(sql_getLogin);
+		while(rs.next()) {
+			this.login = rs.getString("Aid");
+		}
+		
+		return this.login;
+	}
+	
+	public String getuserName(String Aid) throws SQLException{
+		Statement stmt2 = conn.createStatement();
+		String sql_getUserName = "SELECT * FROM ClientInfo WHERE Aid = '" + Aid + "'";
+		ResultSet rs = stmt2.executeQuery(sql_getUserName);
+		while(rs.next()) {
+			this.login = rs.getString("userName");
+		}
+		
+		return this.login;
+	}
+}
