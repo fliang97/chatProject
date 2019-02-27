@@ -1,0 +1,130 @@
+package GUI;
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
+import org.apache.commons.lang3.StringUtils;
+
+import Listener.AddFriendRequestListener;
+import Monitor.AddFriendMonitor;
+import Monitor.AllFriendStatusMonitor;
+import Monitor.DeleteFriendMonitor;
+import Monitor.LogOffMonitor;
+import clientProject.LoginWindow;
+import clientProject.UserListPane;
+import clientProject.chatClient;
+
+
+public class MainWindow extends JFrame implements AddFriendRequestListener{
+	private LoginWindow lw;
+	private chatClient client;
+	private String login;
+
+	public MainWindow(LoginWindow lw, chatClient client, String login) {
+		this.lw = lw;
+		this.client = client;
+		this.login = login;
+	}
+	
+	public void launchMainWindow(){
+		
+		UserListPane userListPane = new UserListPane(this.client, login);
+		userListPane.setPreferredSize(new Dimension(400, 500));
+		this.setTitle("Users List");
+		this.setLayout(new FlowLayout());
+		JLabel friendList = new JLabel("online friend: ");
+		this.add(friendList);
+		this.setResizable(false);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setSize(400, 800);
+		
+		this.getContentPane().add(userListPane, BorderLayout.CENTER);
+		
+		client.addAddFriendRequestListener(this);
+		
+		JButton listFriend = new JButton("All Friend Status");
+		AllFriendStatusMonitor afsw = new AllFriendStatusMonitor(login, client);
+		listFriend.setActionCommand("1");
+		listFriend.addActionListener(afsw);
+		this.add(listFriend);
+		
+		JButton joinGroup = new JButton("Join Group Chat");
+		this.add(joinGroup);
+		
+		JButton createGroup = new JButton("Create Group Chat");
+		this.add(createGroup);
+		
+		JButton addFriend = new JButton("Add Friend");
+		AddFriendMonitor afm = new AddFriendMonitor(client);
+		addFriend.addActionListener(afm);
+		this.add(addFriend);
+		
+		JButton deleteFriend = new JButton("Delete Friend");
+		DeleteFriendMonitor dfm = new DeleteFriendMonitor(userListPane, client, this.login);
+		deleteFriend.addActionListener(dfm);
+		this.add(deleteFriend);
+		
+		JButton profile = new JButton("Edit Account Info");
+		this.add(profile);
+		
+		JButton logOff = new JButton("Log Off");
+		LogOffMonitor lm = new LogOffMonitor(this.client, userListPane, this, login);
+		logOff.setActionCommand("1");
+		logOff.addActionListener(lm);
+		this.add(logOff);
+		
+		JButton quit = new JButton("Quit");
+		quit.setActionCommand("2");
+		quit.addActionListener(lm);
+		this.add(quit);
+	
+		
+
+		
+		
+		
+		
+		this.setVisible(true);
+		//bring up the user window
+		this.lw.setVisible(false);
+	}
+	
+	@Override
+	public void evokeRequestWindow(String fromlogin) {
+		System.out.println("hahaha i am here");
+		String msg = fromlogin + " is sending a friend request to you, do you want to be friend with him/her?";
+		int reply = JOptionPane.showConfirmDialog(null,
+				msg, "Friend Request", JOptionPane.YES_NO_OPTION);
+		String outmsg = "becomefriend fail\n";;
+		if(reply == JOptionPane.YES_OPTION) {
+			 outmsg = "becomefriend succeed " + fromlogin + " " + this.login + "\n";
+		}
+		try {
+			this.client.getOutputStream().write(outmsg.getBytes());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	public void evokeDeleteResultWindow(String result) {
+		if(result.equalsIgnoreCase("succeed")) {
+			JOptionPane.showMessageDialog(this, "Delete Successful");
+		}else {
+			JOptionPane.showMessageDialog(this, "Delete Failed");
+		}
+	}
+}

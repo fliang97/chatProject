@@ -1,0 +1,33 @@
+package GUI;
+
+import java.awt.FlowLayout;
+
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+
+import clientProject.chatClient;
+
+public class EditAccountWindow extends JFrame{
+	private MainWindow mw;
+	private chatClient client;
+	
+	public EditAccountWindow(MainWindow mw, chatClient client) {
+		this.mw = mw;
+		this.client = client;
+	}
+	
+	public void launchEditAccountWindow() {
+		this.setTitle("Edit your information");
+		this.setLayout(new FlowLayout());
+		JLabel friendList = new JLabel("Password: Leaving it blank means no change ");
+		this.add(friendList);
+		this.setResizable(false);
+		this.setDefaultCloseOperation(this.DISPOSE_ON_CLOSE);
+		this.setSize(300, 500);
+		
+		
+		
+		
+		this.setVisible(true);
+	}
+}

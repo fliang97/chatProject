@@ -1,0 +1,32 @@
+package Monitor;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import GUI.EditAccountWindow;
+import clientProject.chatClient;
+
+public class ConfirmEditInfoMonitor implements ActionListener{
+	private chatClient client;
+	private EditAccountWindow eaw;
+	
+	public ConfirmEditInfoMonitor(chatClient client, EditAccountWindow eaw) {
+		this.client = client;
+		this.eaw = eaw;
+	}
+	
+	public void actionPerformed(ActionEvent a) {
+		int command = Integer.parseInt(a.getActionCommand());
+		switch(command) {
+		case 1:
+			if(this.eaw.getPassword().getText().equals("")) System.out.println("yeayeayeabalcnk");
+			else if (this.eaw.getPassword().getText().equals("12345678"))System.out.println("nizhenniubi!");
+			break;
+		case 2:
+			
+			
+			break;
+		}
+	}
+
+}
