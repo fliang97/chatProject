@@ -113,7 +113,9 @@ public class chatClient {
 			@Override
 			public void showCreateGroupResult(String result) {}
 			@Override
-			public void showJoinGroupResult(String result) {}
+			public void showJoinGroupResult(String result, String groupName) {}
+			@Override
+			public void showLeaveGroupResult(String result, String groupName) {}
 		});
 		
 		client.addMessageGroupListener(new MessageGroupListener() {
@@ -211,6 +213,8 @@ public class chatClient {
 						showCreateGroupResult(tokens);
 					}else if("joingroupresult".equalsIgnoreCase(cmd)) {
 						showJoinGroupResult(tokens);
+					}else if("leavegroupresult".equalsIgnoreCase(cmd)) {
+						showLeaveGroupResult(tokens);
 					}
 				}
 			}
@@ -225,15 +229,19 @@ public class chatClient {
 	}
 	
 
-	private void showJoinGroupResult(String[] tokens) {
-		// TODO Auto-generated method stub
+	private void showLeaveGroupResult(String[] tokens) {
 		for(GroupListListener listener: groupListListener) {
-			listener.showJoinGroupResult(tokens[1]);
+			listener.showLeaveGroupResult(tokens[1], tokens[2]);
+		}
+	}
+
+	private void showJoinGroupResult(String[] tokens) {
+		for(GroupListListener listener: groupListListener) {
+			listener.showJoinGroupResult(tokens[1], tokens[2]);
 		}
 	}
 
 	private void showCreateGroupResult(String[] tokens) {
-		// TODO Auto-generated method stub
 		for(GroupListListener listener: groupListListener) {
 			listener.showCreateGroupResult(tokens[1]);
 		}
@@ -246,7 +254,6 @@ public class chatClient {
 	}
 
 	private void editProfileIfSucceed(String[] tokens) {
-		// TODO Auto-generated method stub
 		for(EditProfileResultListener listener : editProfileResultListener) {
 			listener.returnResult(tokens[1]);
 		}

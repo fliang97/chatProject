@@ -2,20 +2,27 @@
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="false" key="isRegEx"/>
-		<item value="Join" key="selection"/>
+		<item value="deletefriendresult" key="selection"/>
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
-			<item value="join"/>
-			<item value="jion"/>
-			<item value="handlejoin"/>
+			<item value="deletefriendresult"/>
+			<item value="promtSucceedPane"/>
+			<item value="delete"/>
+			<item value="result"/>
+			<item value="addfriend"/>
+			<item value="returnaddfriend"/>
+			<item value="returnaddfirend"/>
 			<item value="istopic"/>
-			<item value="topicset"/>
-			<item value="topic"/>
-			<item value="gun"/>
-			<item value=""/>
+			<item value="msg"/>
+			<item value="handlemes"/>
+			<item value="create"/>
+			<item value="remove"/>
+			<item value="creategroup"/>
+			<item value="online"/>
+			<item value="join"/>
 		</list>
 		<list key="replacehistory">
 		</list>

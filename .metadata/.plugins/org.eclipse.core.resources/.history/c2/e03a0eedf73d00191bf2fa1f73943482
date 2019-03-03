@@ -1,0 +1,56 @@
+package Monitor;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+
+import javax.swing.JOptionPane;
+
+import GUI.CreateJoinGroupWindow;
+import GUI.GroupListPane;
+import GUI.GroupManageWindow;
+import GUI.MainWindow;
+import clientProject.chatClient;
+
+public class GroupMonitor implements ActionListener{
+	private GroupManageWindow gmw;
+	private chatClient client;
+	
+	public GroupMonitor(GroupManageWindow gmw, chatClient client) {
+		this.gmw = gmw;
+		this.client = client;
+	}
+	
+	public void actionPerformed(ActionEvent a) {
+		int command = Integer.parseInt(a.getActionCommand());
+		switch(command) {
+		case 1:
+			CreateJoinGroupWindow cgw = new CreateJoinGroupWindow(client, this.gmw.getLogin());
+			cgw.launchCreaGroupWindow();
+			break;
+		case 2:
+			CreateJoinGroupWindow cgw_2 = new CreateJoinGroupWindow(client, this.gmw.getLogin());
+			cgw_2.launchJoinGroupWindow();
+
+			break;
+		case 3:
+			int reply = JOptionPane.showConfirmDialog(null,
+					"Are you sure to leave this group?", "Leave Group", JOptionPane.YES_NO_OPTION);
+			if(reply == JOptionPane.YES_OPTION) {
+				String groupName = this.gmw.getGroupListPane().getUserListUI().getSelectedValue();
+				String msg = "leavegroup " + groupName + " " + this.gmw.getLogin();
+				try {
+					this.client.getOutputStream().write(msg.getBytes());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			break;
+		case 4:
+			client.removeGroupListListener(this.gmw.getGroupListPane());
+			this.gmw.setVisible(false);
+			break;
+		}
+	}
+
+}

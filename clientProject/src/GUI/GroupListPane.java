@@ -74,15 +74,28 @@ public class GroupListPane extends JPanel implements GroupListListener{
 	}
 	
 	@Override 
-	public void showJoinGroupResult(String result) {
+	public void showJoinGroupResult(String result, String groupName) {
 		if(result.equalsIgnoreCase("notexist")) {
 			JOptionPane.showMessageDialog(null, "Group Not Existed!\n Please Enter a Existed Group Name", "Request failed", JOptionPane.ERROR_MESSAGE);
 		}else if(result.equalsIgnoreCase("alreadyin")) {
 			JOptionPane.showMessageDialog(null, "You are already in this group", "Request failed", JOptionPane.ERROR_MESSAGE);
 		}else if(result.equalsIgnoreCase("successful")) {
-			JOptionPane.showMessageDialog(this, "Join Successful! Please Refresh the Window!");
+			JOptionPane.showMessageDialog(this, "Join Successful!");
+			userListModel.addElement(groupName);
 		}else {
 			JOptionPane.showMessageDialog(this, "Server is busy!\n Please Try Again.");
+		}
+	}
+	
+	@Override 
+	public void showLeaveGroupResult(String result, String groupName) {
+		if(result.equalsIgnoreCase("alreadyleft")) {
+			JOptionPane.showMessageDialog(null, "You already left this group", "Request failed", JOptionPane.ERROR_MESSAGE);
+		}else if(result.equalsIgnoreCase("servererror")) {
+			JOptionPane.showMessageDialog(null, "Server is busy!\nPlease try again", "Request failed", JOptionPane.ERROR_MESSAGE);
+		}else {
+			JOptionPane.showMessageDialog(this, "You have left this group!");
+			userListModel.removeElement(groupName);
 		}
 	}
 	

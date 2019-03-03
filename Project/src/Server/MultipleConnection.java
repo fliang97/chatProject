@@ -19,7 +19,7 @@ import org.apache.commons.lang3.*;
 import DB.GetClientInfoDB;
 import DB.HandleAddFriendDB;
 import DB.HandleBecomeFriendDB;
-import DB.HandleCreateJoinGroupDB;
+import DB.HandleGroupFeaturesDB;
 import DB.HandleDeleteFriendDB;
 import DB.HandleEditProfileDB;
 import DB.HandleFriendOfflineDB;
@@ -149,6 +149,8 @@ public class MultipleConnection extends Thread{
 					handleGetGroup(tokens);
 				}else if("joingroup".equalsIgnoreCase(cmd)) {
 					handleJoinGroup(tokens);
+				}else if("leavegroup".equalsIgnoreCase(cmd)) {
+					handleLeaveGroup(tokens);
 				}
 				else{
 					String msg = "unkown " + cmd + "\n";
@@ -161,18 +163,29 @@ public class MultipleConnection extends Thread{
 		//clientSocket.close();
 	}
 	
+	private void handleLeaveGroup(String[] tokens) throws IOException {
+		HandleGroupFeaturesDB hcg = new HandleGroupFeaturesDB(this.conn, tokens);
+		int result = hcg.leaveGroupResult();
+		String msg = "leavegroupresult successful " + tokens[1] + "\n";
+		if(result == 2) {
+			msg = "leavegroupresult alreadyleft " + tokens[1] + "\n";
+		}else if(result == 0) {
+			msg = "leavegroupresult servererror " + tokens[1] + "\n";
+		}
+		outputStream.write(msg.getBytes());
+	}
+	
 	private void handleJoinGroup(String[] tokens) throws IOException {
-		// TODO Auto-generated method stub
 		
-		HandleCreateJoinGroupDB hcg = new HandleCreateJoinGroupDB(this.conn, tokens);
+		HandleGroupFeaturesDB hcg = new HandleGroupFeaturesDB(this.conn, tokens);
 		int result = hcg.joinGroupResult();
-		String msg = "joingroupresult successful\n";
+		String msg = "joingroupresult successful " + tokens[1] + "\n";
 		if(result == 0) {
-			msg = "joingroupresult serverError\n";
+			msg = "joingroupresult serverError " + tokens[1] + "\n";
 		}else if(result == 2) {
-			msg = "joingroupresult notexist\n";
+			msg = "joingroupresult notexist " + tokens[1] + "\n";
 		}else if(result == 3) {
-			msg = "joingroupresult alreadyin\n";
+			msg = "joingroupresult alreadyin " + tokens[1] + "\n";
 		}
 		outputStream.write(msg.getBytes());
 	}
@@ -305,7 +318,7 @@ public class MultipleConnection extends Thread{
 	
 	
 	private void handleCreateGroup(String[] tokens) throws IOException {
-		HandleCreateJoinGroupDB hcg = new HandleCreateJoinGroupDB(this.conn, tokens);
+		HandleGroupFeaturesDB hcg = new HandleGroupFeaturesDB(this.conn, tokens);
 		boolean result = hcg.createGroupResult();
 		String msg = "creategroupresult failed\n";
 		if(result) {

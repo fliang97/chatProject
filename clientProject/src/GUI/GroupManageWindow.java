@@ -52,8 +52,13 @@ public class GroupManageWindow extends JFrame{
 		joinGroup.addActionListener(cgm);
 		this.add(joinGroup);
 		
+		JButton leaveGroup = new JButton("Leave Group");
+		leaveGroup.setActionCommand("3");
+		leaveGroup.addActionListener(cgm);
+		this.add(leaveGroup);
+		
 		JButton back = new JButton("Back");
-		back.setActionCommand("3");
+		back.setActionCommand("4");
 		back.addActionListener(cgm);
 		this.add(back);
 		

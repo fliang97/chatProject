@@ -2,6 +2,9 @@ package Monitor;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+
+import javax.swing.JOptionPane;
 
 import GUI.CreateJoinGroupWindow;
 import GUI.GroupListPane;
@@ -31,6 +34,19 @@ public class GroupMonitor implements ActionListener{
 
 			break;
 		case 3:
+			int reply = JOptionPane.showConfirmDialog(null,
+					"Are you sure to leave this group?", "Leave Group", JOptionPane.YES_NO_OPTION);
+			if(reply == JOptionPane.YES_OPTION) {
+				String groupName = this.gmw.getGroupListPane().getUserListUI().getSelectedValue();
+				String msg = "leavegroup " + groupName + " " + this.gmw.getLogin() + "\n";
+				try {
+					this.client.getOutputStream().write(msg.getBytes());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			break;
+		case 4:
 			client.removeGroupListListener(this.gmw.getGroupListPane());
 			this.gmw.setVisible(false);
 			break;
