@@ -13,6 +13,8 @@ import Listener.AddFriendRequestListener;
 import Listener.AddFriendWindowListener;
 import Listener.AllFriendStatusListener;
 import Listener.EditProfileResultListener;
+import Listener.GroupListListener;
+import Listener.MessageGroupListener;
 import Monitor.LogOffMonitor;
 
 public class chatClient {
@@ -30,6 +32,8 @@ public class chatClient {
 	private ArrayList<AddFriendWindowListener>  addFriendWindowListener = new ArrayList<>();
 	private ArrayList<AddFriendRequestListener>  addFriendRequestListener = new ArrayList<>();
 	private ArrayList<EditProfileResultListener> editProfileResultListener = new ArrayList<>();
+	private ArrayList<GroupListListener> groupListListener = new ArrayList<>();
+	private ArrayList<MessageGroupListener> messageGroupListener = new ArrayList<>();
 	
 	
 	
@@ -94,7 +98,7 @@ public class chatClient {
 		client.addAddFriendRequestListener(new AddFriendRequestListener(){
 			@Override
 			public void evokeRequestWindow(String fromlogin) {}
-			
+			@Override
 			public void evokeDeleteResultWindow(String result) {}
 		});
 		
@@ -102,6 +106,22 @@ public class chatClient {
 			@Override
 			public void returnResult(String result) {}
 		});
+		
+		client.addGroupListListener(new GroupListListener() {
+			@Override
+			public void showGroup(String groupName) {}
+			@Override
+			public void showCreateGroupResult(String result) {}
+			@Override
+			public void showJoinGroupResult(String result) {}
+		});
+		
+		client.addMessageGroupListener(new MessageGroupListener() {
+			@Override
+			public void onMessage(String fromLogin, String userName, String msgBody) {}
+		});
+		
+		
 		
 		
 		
@@ -185,6 +205,12 @@ public class chatClient {
 						promtSucceedPane(tokens);
 					}else if("editprofile".equalsIgnoreCase(cmd)) {
 						editProfileIfSucceed(tokens);
+					}else if("returngroupname".equalsIgnoreCase(cmd)) {
+						showGroupList(tokens);
+					}else if("creategroupresult".equalsIgnoreCase(cmd)) {
+						showCreateGroupResult(tokens);
+					}else if("joingroupresult".equalsIgnoreCase(cmd)) {
+						showJoinGroupResult(tokens);
 					}
 				}
 			}
@@ -199,6 +225,25 @@ public class chatClient {
 	}
 	
 
+	private void showJoinGroupResult(String[] tokens) {
+		// TODO Auto-generated method stub
+		for(GroupListListener listener: groupListListener) {
+			listener.showJoinGroupResult(tokens[1]);
+		}
+	}
+
+	private void showCreateGroupResult(String[] tokens) {
+		// TODO Auto-generated method stub
+		for(GroupListListener listener: groupListListener) {
+			listener.showCreateGroupResult(tokens[1]);
+		}
+	}
+
+	private void showGroupList(String[] tokens) {
+		for(GroupListListener listener: groupListListener) {
+			listener.showGroup(tokens[1]);
+		}
+	}
 
 	private void editProfileIfSucceed(String[] tokens) {
 		// TODO Auto-generated method stub
@@ -258,8 +303,16 @@ public class chatClient {
 		String msg = tokensMsg[3];
 		//String msg = tokensMsg[2];
 		
-		for(MessageListener listener : messageListeners) {
-			listener.onMessage(userName, msg);
+		boolean isTopic = login.charAt(0) == '#';
+		if(isTopic) {
+			for(MessageGroupListener listener : messageGroupListener) {
+				listener.onMessage(login, userName, msg);
+			}
+		}
+		else {
+			for(MessageListener listener : messageListeners) {
+				listener.onMessage(userName, msg);
+			}
 		}
 	}
 	
@@ -339,8 +392,21 @@ public class chatClient {
 		editProfileResultListener.remove(listener);
 	}
 	
+	public void addGroupListListener(GroupListListener listener) {
+		groupListListener.add(listener);
+	}
 	
+	public void removeGroupListListener(GroupListListener listener) {
+		groupListListener.remove(listener);
+	}
 	
+	public void addMessageGroupListener(MessageGroupListener listener) {
+		messageGroupListener.add(listener);
+	}
+	
+	public void removeMessageGroupListener(MessageGroupListener listener) {
+		messageGroupListener.remove(listener);
+	}
 	
 
 }

@@ -20,8 +20,10 @@ import org.apache.commons.lang3.StringUtils;
 import Listener.AddFriendRequestListener;
 import Monitor.AddFriendMonitor;
 import Monitor.AllFriendStatusMonitor;
+import Monitor.GroupMonitor;
 import Monitor.DeleteFriendMonitor;
 import Monitor.EditAccountInfoMonitor;
+import Monitor.GroupActionMonitor;
 import Monitor.LogOffMonitor;
 import clientProject.LoginWindow;
 import clientProject.UserListPane;
@@ -68,11 +70,11 @@ public class MainWindow extends JFrame implements AddFriendRequestListener{
 		listFriend.addActionListener(afsw);
 		this.add(listFriend);
 		
-		JButton createGroup = new JButton("Create Group Chat");
-		this.add(createGroup);
+		JButton group = new JButton("Group");
+		GroupActionMonitor gam = new GroupActionMonitor(this, client);
+		group.addActionListener(gam);
+		this.add(group);
 		
-		JButton joinGroup = new JButton("Join Group Chat");
-		this.add(joinGroup);
 		
 		JButton addFriend = new JButton("Add Friend");
 		AddFriendMonitor afm = new AddFriendMonitor(client);

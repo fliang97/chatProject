@@ -1,0 +1,24 @@
+package Monitor;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import GUI.CreateGroupWindow;
+import GUI.MainWindow;
+import clientProject.chatClient;
+
+public class CreateGroupMonitor implements ActionListener{
+	private MainWindow mw;
+	private chatClient client;
+	
+	public CreateGroupMonitor(MainWindow mw, chatClient client) {
+		this.mw = mw;
+		this.client = client;
+	}
+	
+	public void actionPerformed(ActionEvent a) {
+		CreateGroupWindow cgw = new CreateGroupWindow(client, this.mw.getLogin());
+		cgw.launchCreaGroupWindow();
+	}
+
+}

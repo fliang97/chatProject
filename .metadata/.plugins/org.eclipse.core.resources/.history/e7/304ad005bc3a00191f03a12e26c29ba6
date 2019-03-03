@@ -1,0 +1,29 @@
+package GUI;
+
+import java.awt.FlowLayout;
+
+import javax.swing.BoxLayout;
+import javax.swing.JFrame;
+
+import clientProject.chatClient;
+
+public class CreateGroupWindow extends JFrame{
+	private chatClient client;
+	private String login;
+	
+	public CreateGroupWindow(chatClient client, String login) {
+		this.client = client;
+		this.login = login;
+	}
+	
+	public void launchCreaGroupWindow() {
+		this.getContentPane().setLayout(new BoxLayout(this.getContentPane(),BoxLayout.Y_AXIS));
+		this.setTitle("Create Your Own Group Chat");
+		this.setLayout(new FlowLayout());
+		this.setSize(300, 100);
+		this.setResizable(false);
+		this.setDefaultCloseOperation(this.DISPOSE_ON_CLOSE);
+		this.setLocationRelativeTo(null);
+	}
+
+}

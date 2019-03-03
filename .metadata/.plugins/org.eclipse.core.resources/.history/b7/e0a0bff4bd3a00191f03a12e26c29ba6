@@ -1,0 +1,26 @@
+package Monitor;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import GUI.CreateGroupWindow;
+import clientProject.chatClient;
+
+public class ConfirmCreateGroupMonitor implements ActionListener{
+	private CreateGroupWindow cgw;
+	private chatClient client;
+	private String login;
+	
+	public ConfirmCreateGroupMonitor(CreateGroupWindow cgw, chatClient client, String login) {
+		this.cgw = cgw;
+		this.client = client;
+	}
+	
+	public void actionPerformed(ActionEvent a) {
+		String groupName = this.cgw.getGroupNameField().getText();
+		String msg = "creategroup #" + groupName + " " + login + "\n";
+		System.out.println("msg = " + msg);
+	}
+	
+
+}

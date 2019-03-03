@@ -19,67 +19,17 @@ public class UserListPane extends JPanel implements UserStatusListener{
 	private chatClient client;
 	private JList<String> userListUI;
 	private DefaultListModel<String> userListModel;
-	private Connection conn = null;
-	private Statement stmt = null;
 	private String Aid_1 = null;
-	private String password = null;
 	
 	public JList<String> getUserListUI(){
 		return this.userListUI;
 	}
-	
-	public UserListPane(chatClient client, Connection conn, Statement stmt, String Aid_1) {
-		this.client = client;
-		this.client.addUserStatusListener(this);
-		this.conn = conn;
-		this.stmt = stmt;
-		this.Aid_1 = Aid_1;
-		
-		userListModel = new DefaultListModel<>();
-		userListUI = new JList<>(userListModel);
-		setLayout(new BorderLayout());
-		add(new JScrollPane(userListUI), BorderLayout.CENTER);
-		
-
-		
-		userListUI.addMouseListener(new MouseAdapter(){
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				try {
-					if(e.getClickCount() > 1) {
-						String login = null;
-						String sql_getAccount = "SELECT userName FROM ClientInfo WHERE UserName = '" + userListUI.getSelectedValue() + "'";
-						ResultSet rs = stmt.executeQuery(sql_getAccount);
-						while(rs.next()) {
-							login = rs.getString("Aid");
-						}
-						//String login = userListUI.getSelectedValue();
-						MessagePane messagePane = new MessagePane(client, userListUI.getSelectedValue());
-					
-						JFrame f = new JFrame("Message " + userListUI.getSelectedValue());
-
-						f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-						f.setSize(500, 500);
-						f.getContentPane().add(messagePane, BorderLayout.CENTER);
-					
-						f.setVisible(true);
-					}
-					
-				}catch(SQLException ex) {
-					ex.printStackTrace();
-				}
-			}
-			
-		});
-	}
-
 
 	
 	public UserListPane(chatClient client, String login) {
 		this.client = client;
 		this.client.addUserStatusListener(this);
 		this.Aid_1 = login;
-		this.password = password;
 
 		userListModel = new DefaultListModel<>();
 		userListUI = new JList<>(userListModel);

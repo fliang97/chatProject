@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename type &apos;DB.HandleCreateGroupDB&apos; to &apos;HandleCreateJoinGroupDB&apos;&#x0A;- Original project: &apos;Project&apos;&#x0A;- Original element: &apos;DB.HandleCreateGroupDB&apos;&#x0A;- Renamed element: &apos;DB.HandleCreateJoinGroupDB&apos;&#x0A;- Update references to refactored element&#x0A;- Update textual occurrences in comments and strings" description="Rename type &apos;HandleCreateGroupDB&apos;" flags="589830" id="org.eclipse.jdt.ui.rename.type" input="/src&lt;DB{HandleCreateGroupDB.java[HandleCreateGroupDB" matchStrategy="1" name="HandleCreateJoinGroupDB" qualified="false" references="true" similarDeclarations="false" stamp="1551572015506" textual="false" version="1.0"/>
+</session>

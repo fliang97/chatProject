@@ -43,8 +43,8 @@ public class LoginWindow extends JFrame{
 		this.add(this.passwordField);
 		
 		
-		//this.client = new chatClient("localhost", 8818);
-		this.client = new chatClient("70.191.94.48", 8818);
+		this.client = new chatClient("localhost", 8818);
+		//this.client = new chatClient("70.191.94.48", 8818);
 		client.connect();
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

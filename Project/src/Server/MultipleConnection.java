@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang3.*;
@@ -18,10 +19,12 @@ import org.apache.commons.lang3.*;
 import DB.GetClientInfoDB;
 import DB.HandleAddFriendDB;
 import DB.HandleBecomeFriendDB;
+import DB.HandleCreateJoinGroupDB;
 import DB.HandleDeleteFriendDB;
 import DB.HandleEditProfileDB;
 import DB.HandleFriendOfflineDB;
 import DB.HandleGetFriendDB;
+import DB.HandleGetGroupDB;
 import DB.HandleLogOffDB;
 import DB.LoginCheckDB;
 import DB.SignUpDB;
@@ -54,6 +57,10 @@ public class MultipleConnection extends Thread{
 	
 	public Socket getClientSocket() {
 		return this.clientSocket;
+	}
+	
+	public HashSet<String> getTopicSet() {
+		return this.topicSet;
 	}
 	
 	private void handleLogoff() throws IOException, SQLException {
@@ -115,8 +122,8 @@ public class MultipleConnection extends Thread{
 				}else if("msg".equalsIgnoreCase(cmd)) {
 					String[] tokensMsg = StringUtils.split(input, null, 3);
 					handleMessage(tokensMsg);
-				}else if("join".equalsIgnoreCase(cmd)) {
-					handleJoin(tokens);
+				//}else if("join".equalsIgnoreCase(cmd)) {
+					//handleJoin(tokens);
 				}else if("leave".equalsIgnoreCase(cmd)) {
 					handleLeave(tokens);
 				}else if("signup".equalsIgnoreCase(cmd)) {
@@ -135,10 +142,16 @@ public class MultipleConnection extends Thread{
 					handleDeleteFriend(tokens);
 				}else if("editprofile".equalsIgnoreCase(cmd)) {
 					String[] tokensMsg = StringUtils.split(input, null, 4);
-					handleEditProfile(tokens);
+					handleEditProfile(tokensMsg);
+				}else if("creategroup".equalsIgnoreCase(cmd)) {
+					handleCreateGroup(tokens);
+				}else if("getGroup".equalsIgnoreCase(cmd)) {
+					handleGetGroup(tokens);
+				}else if("joingroup".equalsIgnoreCase(cmd)) {
+					handleJoinGroup(tokens);
 				}
 				else{
-					String msg = "unkown" + cmd + "\n";
+					String msg = "unkown " + cmd + "\n";
 					outputStream.write(msg.getBytes());
 				}
 			//String msg = "you type: " + input + "\n";
@@ -148,6 +161,32 @@ public class MultipleConnection extends Thread{
 		//clientSocket.close();
 	}
 	
+	private void handleJoinGroup(String[] tokens) throws IOException {
+		// TODO Auto-generated method stub
+		
+		HandleCreateJoinGroupDB hcg = new HandleCreateJoinGroupDB(this.conn, tokens);
+		int result = hcg.joinGroupResult();
+		String msg = "joingroupresult successful\n";
+		if(result == 0) {
+			msg = "joingroupresult serverError\n";
+		}else if(result == 2) {
+			msg = "joingroupresult notexist\n";
+		}else if(result == 3) {
+			msg = "joingroupresult alreadyin\n";
+		}
+		outputStream.write(msg.getBytes());
+	}
+
+	private void handleGetGroup(String[] tokens) throws SQLException, IOException {
+		HandleGetGroupDB hgg= new HandleGetGroupDB(tokens, this.conn);
+		ArrayList<String> groupList = hgg.run();
+		for(int i = 0; i < groupList.size(); i++) {
+			String msg = "returngroupname " + groupList.get(i) + "\n";
+			outputStream.write(msg.getBytes());
+		}
+		
+	}
+
 	private void handleEditProfile(String[] tokens) throws IOException {
 		HandleEditProfileDB hep = new HandleEditProfileDB(tokens, this.conn);
 		boolean result = hep.editProfileResult();
@@ -265,11 +304,14 @@ public class MultipleConnection extends Thread{
 	}
 	
 	
-	private void handleJoin(String[] tokens) {
-		if(tokens.length > 1) {
-			String topic = tokens[1];
-			topicSet.add(topic);
+	private void handleCreateGroup(String[] tokens) throws IOException {
+		HandleCreateJoinGroupDB hcg = new HandleCreateJoinGroupDB(this.conn, tokens);
+		boolean result = hcg.createGroupResult();
+		String msg = "creategroupresult failed\n";
+		if(result) {
+			msg = "creategroupresult successful\n";
 		}
+		outputStream.write(msg.getBytes());
 	}
 
 	//format: "msg" "login" "message"
@@ -284,15 +326,10 @@ public class MultipleConnection extends Thread{
 		List<MultipleConnection> connectionList = server.getConnectionList();
 		for(MultipleConnection mc : connectionList) {
 			if(isTopic) {
-				if(mc.isMemberOfTopic(sendTo)) {
-					//String outMsg = "msg " + sendTo + ":" + login + " " + body + "\n";
-					//System.out.println("1");
-					//GetClientInfoDB gci = new GetClientInfoDB(sendTo, this.conn);
-					//String login_1 = gci.getLogin();
-					//String outMsg = "msg " + login_1 + " " + body + "\n";
-					//System.out.println(outMsg);
-					//mc.send(outMsg);
-				}
+				//if(mc.isMemberOfTopic(sendTo)) {
+					String outMsg = "msg " + sendTo + " " + login + " " + body + "\n";
+					mc.send(outMsg);
+				//}
 			}else {
 				GetClientInfoDB gci = new GetClientInfoDB(this.conn);
 				String login_1 = gci.getLogin(sendTo);

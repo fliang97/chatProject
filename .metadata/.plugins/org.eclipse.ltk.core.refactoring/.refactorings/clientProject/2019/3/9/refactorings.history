@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename type &apos;Monitor.CreateGroupMonitor&apos; to &apos;GroupMonitor&apos;&#x0A;- Original project: &apos;clientProject&apos;&#x0A;- Original element: &apos;Monitor.CreateGroupMonitor&apos;&#x0A;- Renamed element: &apos;Monitor.GroupMonitor&apos;&#x0A;- Update references to refactored element&#x0A;- Update textual occurrences in comments and strings" description="Rename type &apos;CreateGroupMonitor&apos;" flags="589830" id="org.eclipse.jdt.ui.rename.type" input="/src&lt;Monitor{CreateGroupMonitor.java[CreateGroupMonitor" matchStrategy="1" name="GroupMonitor" qualified="false" references="true" similarDeclarations="false" stamp="1551570470661" textual="false" version="1.0"/>
+</session>
