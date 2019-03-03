@@ -64,8 +64,22 @@ public class LoginMonitor extends JFrame implements ActionListener{
 		
 		String login = this.loginWindow.getLoginField().getText();
 		String password = this.loginWindow.getJPasswordField().getText();	
-		
+		int accountlen = login.length();
+		int passlen = password.length();
+		if(accountlen < 8 || accountlen > 10) {
+			JOptionPane.showMessageDialog(this, "Account length should be between 8 and 10, please retry");
+			return;
+		}
+		if(!(login.matches("[0-9]+"))){
+			JOptionPane.showMessageDialog(this, "Account should be composed with all digitals, please retry");
+			return;
+		}
+		if(passlen < 8 || passlen >10) {
+			JOptionPane.showMessageDialog(this, "Password length should be between 8 and 10, please retry");
+			return;
+		}
 		try {
+			
 			if(client.login(login, password)) {
 				MainWindow mw = new MainWindow(this.loginWindow, client, login);
 				mw.launchMainWindow();

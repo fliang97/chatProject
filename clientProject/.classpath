@@ -6,11 +6,15 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/Users/liangfujie/Downloads/cs176b/project/newproject/Project/lib/commons-lang3-3.8.1.jar">
+	<classpathentry kind="lib" path="lib/commons-lang3-3.8.1.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/Users/liangfujie/Downloads/gghahah/mysql-connector-java-8.0.15.jar"/>
+	<classpathentry kind="lib" path="lib/mysql-connector-java-8.0.15.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

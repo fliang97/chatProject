@@ -39,6 +39,24 @@ public class SignUpMonitor implements ActionListener{
 			
 			String tokens = "signup " + account + " " + password + " " + userName + " " + profile + "\n";
 			try {
+				int accountlen = account.length();
+				int passlen = password.length();
+				if(accountlen < 8 || accountlen > 10) {
+					JOptionPane.showMessageDialog(null, "Account length should be between 8 and 10, please retry");
+					return;
+				}
+				if(!(account.matches("[0-9]+"))){
+					JOptionPane.showMessageDialog(null, "Account should be composed with all digitals, please retry");
+					return;
+				}
+				if(passlen < 8 || passlen >10) {
+					JOptionPane.showMessageDialog(null, "Password length should be between 8 and 10, please retry");
+					return;
+				}
+				if(!(password.matches("[0-9]+"))){
+					JOptionPane.showMessageDialog(null, "Password should be composed with all digitals, please retry");
+					return;
+				}
 				this.client.getOutputStream().write(tokens.getBytes());
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
