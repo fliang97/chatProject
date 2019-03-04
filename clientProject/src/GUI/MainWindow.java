@@ -22,6 +22,7 @@ import Monitor.AddFriendMonitor;
 import Monitor.AllFriendStatusMonitor;
 import Monitor.DeleteFriendMonitor;
 import Monitor.LogOffMonitor;
+import Monitor.EditProfileMonitor;
 import clientProject.LoginWindow;
 import clientProject.UserListPane;
 import clientProject.chatClient;
@@ -71,6 +72,8 @@ public class MainWindow extends JFrame implements AddFriendRequestListener{
 		this.add(deleteFriend);
 		
 		JButton profile = new JButton("Edit Account Info");
+		EditProfileMonitor epm = new EditProfileMonitor(client);
+		profile.addActionListener(epm);
 		this.add(profile);
 		
 		JButton logOff = new JButton("Log Off");

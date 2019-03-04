@@ -40,9 +40,8 @@ public class AllFriendStatusMonitor implements ActionListener{
 			}
 			AllFriendStatusWindow afsw = new AllFriendStatusWindow();
 			afsw.launchWindow(account, this.client);
-			
-			
 			break;
+			
 		case 2:
 			this.afsw.setVisible(false);
 			break;

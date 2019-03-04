@@ -12,6 +12,7 @@ import org.apache.commons.lang3.*;
 import Listener.AddFriendRequestListener;
 import Listener.AddFriendWindowListener;
 import Listener.AllFriendStatusListener;
+import Listener.EditProfileListener;
 import Monitor.LogOffMonitor;
 
 public class chatClient {
@@ -28,6 +29,7 @@ public class chatClient {
 	private ArrayList<AllFriendStatusListener>  allFriendStatusListener = new ArrayList<>();
 	private ArrayList<AddFriendWindowListener>  addFriendWindowListener = new ArrayList<>();
 	private ArrayList<AddFriendRequestListener>  addFriendRequestListener = new ArrayList<>();
+	//private ArrayList<EditProfileListener> editProfileListener = new ArrayList<>();
 	
 	
 	
@@ -88,6 +90,11 @@ public class chatClient {
 			@Override
 			public void showWindow(String result) {}
 		});
+		
+//		client.addEditProfileListener(new EditProfileListener() {
+//			@Override
+//			public void showMegWindow(String result) {}
+//		});
 		
 		client.addAddFriendRequestListener(new AddFriendRequestListener(){
 			@Override
