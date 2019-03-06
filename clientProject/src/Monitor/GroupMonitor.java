@@ -34,6 +34,7 @@ public class GroupMonitor implements ActionListener{
 
 			break;
 		case 3:
+			if(this.gmw.getGroupListPane().getUserListUI().getSelectedValue() == null) return;
 			int reply = JOptionPane.showConfirmDialog(null,
 					"Are you sure to leave this group?", "Leave Group", JOptionPane.YES_NO_OPTION);
 			if(reply == JOptionPane.YES_OPTION) {

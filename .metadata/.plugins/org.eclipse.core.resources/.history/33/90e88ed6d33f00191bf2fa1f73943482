@@ -1,0 +1,8 @@
+package Listener;
+
+import GUI.string;
+
+public interface SendFileListener {
+	public void sendFileRequest(String token);
+	public void returnFileRequest(String[] tokens);
+}

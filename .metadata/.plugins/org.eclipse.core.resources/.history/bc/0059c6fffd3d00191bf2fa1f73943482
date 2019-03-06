@@ -1,0 +1,17 @@
+package clientProject;
+
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+
+public class fileChooser {
+
+	public static void main(String[] args) {
+		JButton open = new JButton();
+		JFileChooser fc = new JFileChooser();
+		//int response = fc.showDialog(Savefile.this);
+		fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+		
+		
+		System.out.println("YOU CHOOSE: " + fc.getSelectedFile().getAbsolutePath());
+	}
+}

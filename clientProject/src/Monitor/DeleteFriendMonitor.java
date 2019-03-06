@@ -21,6 +21,7 @@ public class DeleteFriendMonitor implements ActionListener{
 	}
 
 	public void actionPerformed(ActionEvent a) {
+		if(ulp.getUserListUI().getSelectedValue() == null ) return;
 		String msg = "Are you going to delete your friend " + ulp.getUserListUI().getSelectedValue() + "?";
 		int reply = JOptionPane.showConfirmDialog(null,
 				msg, "Delete Friend", JOptionPane.YES_NO_OPTION);

@@ -27,10 +27,10 @@ public class AllFriendStatusWindow extends JFrame{
 	
 		OnlineFriendStatusPane afsp = new OnlineFriendStatusPane(client);
 			
-		afsp.setPreferredSize(new Dimension(400, 500));
+		afsp.setPreferredSize(new Dimension(400, 400));
 		
 		this.setLayout(new FlowLayout());
-		this.setSize(500, 800);
+		this.setSize(410, 500);
 		
 		this.getContentPane().add(afsp, BorderLayout.CENTER);
 

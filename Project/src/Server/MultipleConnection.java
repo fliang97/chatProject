@@ -1,10 +1,13 @@
 package Server;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -102,6 +105,18 @@ public class MultipleConnection extends Thread{
 			e.printStackTrace();
 		}
 	}
+	
+
+	/*public String decipherMsg(String input) {
+		String msg;
+		byte[] b = input.getBytes();
+		for(int i = 0; i < b.length; i++) {
+			b[i] = (byte) ( Math.pow(b[i], 11) % 14);
+		}
+		
+		msg = new String(b);
+		return msg;
+	}*/
 
 	private void enabledMultipleConnection() throws IOException, InterruptedException, SQLException {
 		InputStream inputStream = clientSocket.getInputStream();
@@ -110,6 +125,8 @@ public class MultipleConnection extends Thread{
 		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 		String input;
 		while( (input = reader.readLine()) != null) {
+			//input = decipherMsg(input);
+					
 			System.out.println(input);
 			String[] tokens = StringUtils.split(input);
 			if(tokens != null && tokens.length > 0) {
@@ -151,6 +168,11 @@ public class MultipleConnection extends Thread{
 					handleJoinGroup(tokens);
 				}else if("leavegroup".equalsIgnoreCase(cmd)) {
 					handleLeaveGroup(tokens);
+				}else if("sendfile".equalsIgnoreCase(cmd)) {
+					if(tokens[4].equalsIgnoreCase("sendfilerequest"))
+						sendBackRequest(tokens);
+				}else if("confirmsend".equalsIgnoreCase(cmd)) {
+					catchFileFromClient(tokens);
 				}
 				else{
 					String msg = "unkown " + cmd + "\n";
@@ -163,6 +185,80 @@ public class MultipleConnection extends Thread{
 		//clientSocket.close();
 	}
 	
+	private void catchFileFromClient(String[] tokens) throws IOException {
+		
+		
+		int SOCKET_PORT = 8000;
+		int bytesRead;
+	    int current = 0;
+	    FileOutputStream fos = null;
+	    BufferedOutputStream bos = null;
+	    ServerSocket servsock = null;
+	    Socket sock = null;
+	    int FILE_SIZE = 95551830;
+	    String fileName = "sentfrom" + tokens[2] + "to" + tokens[1] + tokens[3];
+	    String FILE_TO_RECEIVED = "/Users/liangfujie/Downloads/cs176b/Server_Receive/" + fileName;
+	    
+
+	    try {
+	        servsock = new ServerSocket(SOCKET_PORT);
+	        
+		    String msg = "sendrequestconfirm\n";
+		    List<MultipleConnection> connectionList = server.getConnectionList();
+			for(MultipleConnection mc : connectionList) {
+				if(mc.getLogin().equalsIgnoreCase(tokens[2])) {
+					mc.send(msg);
+				}
+			}
+	        
+	            sock = servsock.accept(); // new
+	        
+	            System.out.println("Connecting...");
+
+	            byte [] mybytearray  = new byte [FILE_SIZE];
+	            InputStream is = sock.getInputStream();
+	            fos = new FileOutputStream(FILE_TO_RECEIVED);
+	            bos = new BufferedOutputStream(fos);
+	            bytesRead = is.read(mybytearray,0,mybytearray.length);
+	            current = bytesRead;
+
+	            do {
+	                bytesRead =
+	                is.read(mybytearray, current, (mybytearray.length-current));
+	          if(bytesRead >= 0) current += bytesRead;
+	            }while(bytesRead > -1);
+
+	            bos.write(mybytearray, 0 , current);
+	            bos.flush();
+	            System.out.println("File " + FILE_TO_RECEIVED
+	          + " downloaded (" + current + " bytes read)");
+	        
+	    }catch(Exception e){
+	    	e.printStackTrace();
+	    }finally {
+	        if (fos != null) fos.close();
+	        if (bos != null) bos.close();
+	        if (sock != null) sock.close();
+	      }
+	    
+	}
+
+	private void sendBackRequest(String[] tokens) throws SQLException, IOException {
+	
+		GetClientInfoDB gci = new GetClientInfoDB(this.conn);
+		String FromuserName = gci.getuserName(tokens[2]);
+		String toAccount = gci.getLogin(tokens[1]);
+		String outSendToMsg = "sendfiletoyou " + FromuserName + " " + tokens[2] + " " + tokens[3] + "\n";
+		
+		List<MultipleConnection> connectionList = server.getConnectionList();
+		for(MultipleConnection mc : connectionList) {
+			if(mc.getLogin().equalsIgnoreCase(toAccount)) {
+				mc.send(outSendToMsg);
+			}
+		}
+	}
+
+
 	private void handleLeaveGroup(String[] tokens) throws IOException {
 		HandleGroupFeaturesDB hcg = new HandleGroupFeaturesDB(this.conn, tokens);
 		int result = hcg.leaveGroupResult();
@@ -171,6 +267,8 @@ public class MultipleConnection extends Thread{
 			msg = "leavegroupresult alreadyleft " + tokens[1] + "\n";
 		}else if(result == 0) {
 			msg = "leavegroupresult servererror " + tokens[1] + "\n";
+		}else {
+			topicSet.remove(tokens[1]);
 		}
 		outputStream.write(msg.getBytes());
 	}
@@ -186,6 +284,8 @@ public class MultipleConnection extends Thread{
 			msg = "joingroupresult notexist " + tokens[1] + "\n";
 		}else if(result == 3) {
 			msg = "joingroupresult alreadyin " + tokens[1] + "\n";
+		}else {
+			topicSet.add(tokens[1]);
 		}
 		outputStream.write(msg.getBytes());
 	}
@@ -196,6 +296,9 @@ public class MultipleConnection extends Thread{
 		for(int i = 0; i < groupList.size(); i++) {
 			String msg = "returngroupname " + groupList.get(i) + "\n";
 			outputStream.write(msg.getBytes());
+			
+			//add to current topic set
+			this.topicSet.add(groupList.get(i));
 		}
 		
 	}
@@ -323,6 +426,7 @@ public class MultipleConnection extends Thread{
 		String msg = "creategroupresult failed\n";
 		if(result) {
 			msg = "creategroupresult successful\n";
+			this.topicSet.add(tokens[1]);
 		}
 		outputStream.write(msg.getBytes());
 	}
@@ -339,10 +443,12 @@ public class MultipleConnection extends Thread{
 		List<MultipleConnection> connectionList = server.getConnectionList();
 		for(MultipleConnection mc : connectionList) {
 			if(isTopic) {
-				//if(mc.isMemberOfTopic(sendTo)) {
+				if(mc.isMemberOfTopic(sendTo)) {
+
+				
 					String outMsg = "msg " + sendTo + " " + login + " " + body + "\n";
 					mc.send(outMsg);
-				//}
+				}
 			}else {
 				GetClientInfoDB gci = new GetClientInfoDB(this.conn);
 				String login_1 = gci.getLogin(sendTo);

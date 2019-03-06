@@ -15,6 +15,7 @@ import Listener.AllFriendStatusListener;
 import Listener.EditProfileResultListener;
 import Listener.GroupListListener;
 import Listener.MessageGroupListener;
+import Listener.SendFileListener;
 import Monitor.LogOffMonitor;
 
 public class chatClient {
@@ -34,7 +35,7 @@ public class chatClient {
 	private ArrayList<EditProfileResultListener> editProfileResultListener = new ArrayList<>();
 	private ArrayList<GroupListListener> groupListListener = new ArrayList<>();
 	private ArrayList<MessageGroupListener> messageGroupListener = new ArrayList<>();
-	
+	private ArrayList<SendFileListener> sendFileListener = new ArrayList<>();
 	
 	
 	public InputStream getServerIn() {
@@ -123,6 +124,15 @@ public class chatClient {
 			public void onMessage(String fromLogin, String userName, String msgBody) {}
 		});
 		
+		client.addSendFileListener(new SendFileListener() {
+			@Override 
+			public void sendFileRequest(String token) {}
+			@Override 
+			public void returnFileRequest(String[] tokens) {}
+			@Override 
+			public void startSendFile() {}
+		});
+		
 		
 		
 		
@@ -146,11 +156,30 @@ public class chatClient {
 				
 	}
 	
-
+	//server public key(5, 14);
+	
+	/*public String EncryptedText(String msg) {
+		String outmsg;
+		byte[] b = msg.getBytes();
+		for(int i = 0; i < b.length - 1; i++) {
+			b[i] = (byte) (Math.pow(b[i], 5) % 14);
+		}
+		
+		outmsg = new String(b);
+		
+		System.out.println(msg);
+		
+		return outmsg;
+		
+		
+	}*/
 	
 	public boolean login(String login, String password) throws IOException {
 		// TODO Auto-generated method stub
 		String cmd = "login " + login + " " + password + "\n";
+		
+		//cmd = EncryptedText(cmd);
+		
 		serverOut.write(cmd.getBytes());
 		
 		String response = bufferedIn.readLine();
@@ -215,6 +244,10 @@ public class chatClient {
 						showJoinGroupResult(tokens);
 					}else if("leavegroupresult".equalsIgnoreCase(cmd)) {
 						showLeaveGroupResult(tokens);
+					}else if("sendfiletoyou".equalsIgnoreCase(cmd)) {
+						promtConfirmFileWindow(tokens);
+					}else if("sendrequestconfirm".equalsIgnoreCase(cmd)) {
+						startSendFile();
 					}
 				}
 			}
@@ -228,6 +261,18 @@ public class chatClient {
 		}
 	}
 	
+
+	private void startSendFile() {
+		for(SendFileListener listener: sendFileListener) {
+			listener.startSendFile();
+		}
+	}
+
+	private void promtConfirmFileWindow(String[] tokens) {
+		for(SendFileListener listener: sendFileListener) {
+			listener.returnFileRequest(tokens);
+		}
+	}
 
 	private void showLeaveGroupResult(String[] tokens) {
 		for(GroupListListener listener: groupListListener) {
@@ -413,6 +458,14 @@ public class chatClient {
 	
 	public void removeMessageGroupListener(MessageGroupListener listener) {
 		messageGroupListener.remove(listener);
+	}
+	
+	public void addSendFileListener(SendFileListener listener) {
+		sendFileListener.add(listener);
+	}
+	
+	public void removeSendFileListener(SendFileListener listener) {
+		sendFileListener.remove(listener);
 	}
 	
 
