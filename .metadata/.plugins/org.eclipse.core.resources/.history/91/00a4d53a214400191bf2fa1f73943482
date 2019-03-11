@@ -96,7 +96,6 @@ public class MultipleConnection extends Thread{
 			String msg = "succeed\n";
 			outputStream.write(msg.getBytes());
 			server.removeWorker(this);
-			server.setConnectionList(server.resizeList(server.getConnectionList()));
 			clientSocket.close();
 		}else {
 			String error = "System error, logoff failed.";
@@ -232,18 +231,15 @@ public class MultipleConnection extends Thread{
 			e.printStackTrace();
 		}
 		TimeUnit.SECONDS.sleep(2);
-		List<MultipleConnection> connectionList = server.getConnectionList();
+		/*List<MultipleConnection> connectionList = server.getConnectionList();
 		String thisProfile = gci.getProfile(this.login);
-		if(result) {
-			for(MultipleConnection mc : connectionList) {
-				if(mc.getLogin().equals(aid)) {
-					msg = "handshakefriend successful " + this.userName + " " + this.nation + " " + this.PrefLang + " " + this.login + " " + thisProfile + "\n";
-					mc.send(msg);			
-				}
+		for(MultipleConnection mc : connectionList) {
+			if(mc.getLogin().equals(aid)) {
+				msg = "handshakefriend successful " + this.userName + " " + this.nation + " " + this.PrefLang + " " + this.login + " " + thisProfile + "\n";
+				mc.send(msg);
 			}
-		}
+		}*/
 		server.getHandShakeGroup().remove(this);
-		server.setHandShakeGroup(server.resizeList(server.getHandShakeGroup()));
 		System.out.println(msg);
 		
 	}

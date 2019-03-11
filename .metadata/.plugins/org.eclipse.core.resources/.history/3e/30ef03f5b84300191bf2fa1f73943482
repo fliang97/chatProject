@@ -69,7 +69,7 @@ public class MainWindow extends JFrame implements AddFriendRequestListener, Send
 		
 		UserListPane userListPane = new UserListPane(this.client, login);
 		userListPane.setPreferredSize(new Dimension(400, 500));
-		this.setTitle("Users List of Account: " + this.login);
+		this.setTitle("Users List");
 		this.setLayout(new FlowLayout());
 		JLabel friendList = new JLabel("online friend: ");
 		this.add(friendList);
@@ -131,6 +131,10 @@ public class MainWindow extends JFrame implements AddFriendRequestListener, Send
 		quit.addActionListener(lm);
 		this.add(quit);
 	
+		
+
+		
+		
 		
 		
 		this.setVisible(true);
@@ -298,13 +302,8 @@ public class MainWindow extends JFrame implements AddFriendRequestListener, Send
 	}
 	
 	@Override
-	public void HandShake(String[] tokensMsg) {
-		String userName = tokensMsg[2];
-		String Nation = tokensMsg[3];
-		String PrefLang = tokensMsg[4];
-		String aid = tokensMsg[5];
-		String profile = tokensMsg[6];
-		String msg = userName + " from " + Nation + " is handshaking with you.\nHe/She speaks " + PrefLang + "\n" + profile; 
+	public void HandShake(String UserName, String Nation, String PrefLang, String aid) {
+		String msg = UserName + " from " + Nation + " is handshaking with you.\nHe/She speaks " + PrefLang + "\n"; 
 		int reply = JOptionPane.showConfirmDialog(null,
 				msg, "HandShake", JOptionPane.YES_NO_OPTION);
 		if(reply == JOptionPane.YES_OPTION) {

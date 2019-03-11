@@ -24,7 +24,7 @@ public class LoginWindow extends JFrame{
 	
 	public LoginWindow() {
 		this.getContentPane().setLayout(new BoxLayout(this.getContentPane(),BoxLayout.Y_AXIS));
-		this.setTitle("handShake");
+		this.setTitle("chatMate");
 		this.setLayout(new FlowLayout());
 		this.setSize(500, 500);
 		this.setResizable(false);

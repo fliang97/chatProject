@@ -56,26 +56,6 @@ public class Server extends Thread{
 		return connectionList;
 	}
 	
-	public ArrayList<MultipleConnection> resizeList(ArrayList<MultipleConnection> handShakeGroup){
-		ArrayList<MultipleConnection> newArrayList= new ArrayList<>();
-		for(MultipleConnection mc: handShakeGroup) {
-			if(mc.getLogin() != null) {
-				newArrayList.add(mc);
-			}
-		}
-		return newArrayList;
-	}
-	
-	public void setConnectionList(ArrayList<MultipleConnection> mc) {
-		this.connectionList = mc;
-	}
-	
-	public void setHandShakeGroup(ArrayList<MultipleConnection> mc) {
-		this.handShakeGroup = mc;
-	}
-	
-	
-	
 	@Override
 	public void run() {
 		try {

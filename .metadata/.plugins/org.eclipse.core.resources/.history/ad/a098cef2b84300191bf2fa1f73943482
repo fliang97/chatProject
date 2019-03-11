@@ -96,20 +96,4 @@ public class GetClientInfoDB {
 		}
 		return this.login;
 	}
-	
-	public String getProfile(String Aid) {
-		Statement stmt7;
-		try {
-			stmt7 = conn.createStatement();
-			String sql_getUserName = "SELECT * FROM ClientInfo WHERE Aid = '" + Aid + "'";
-			ResultSet rs = stmt7.executeQuery(sql_getUserName);
-			while(rs.next()) {
-				this.login = rs.getString("Profile");
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return this.login;
-	}
 }

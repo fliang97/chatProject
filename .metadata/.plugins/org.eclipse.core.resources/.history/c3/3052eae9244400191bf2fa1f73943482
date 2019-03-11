@@ -96,7 +96,6 @@ public class MultipleConnection extends Thread{
 			String msg = "succeed\n";
 			outputStream.write(msg.getBytes());
 			server.removeWorker(this);
-			server.setConnectionList(server.resizeList(server.getConnectionList()));
 			clientSocket.close();
 		}else {
 			String error = "System error, logoff failed.";
@@ -243,7 +242,6 @@ public class MultipleConnection extends Thread{
 			}
 		}
 		server.getHandShakeGroup().remove(this);
-		server.setHandShakeGroup(server.resizeList(server.getHandShakeGroup()));
 		System.out.println(msg);
 		
 	}

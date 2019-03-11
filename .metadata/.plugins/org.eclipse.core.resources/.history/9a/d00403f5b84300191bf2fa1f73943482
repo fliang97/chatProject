@@ -134,7 +134,7 @@ public class chatClient {
 			@Override
 			public void startReceiveFile(String[] tokens) {}
 			@Override
-			public void HandShake(String[] tokensMsg) {}
+			public void HandShake(String UserName, String Nation, String PrefLang, String aid) {}
 		});
 		
 		
@@ -263,8 +263,7 @@ public class chatClient {
 					}else if("readytosendfile".equalsIgnoreCase(cmd)) {
 						startReceiveFile(tokens);
 					}else if("handshakefriend".equalsIgnoreCase(cmd)) {
-						String[] tokensMsg = StringUtils.split(line, null, 7);
-						handShakeFriend(tokensMsg);
+						handShakeFriend(tokens);
 					}
 				}
 			}
@@ -279,10 +278,10 @@ public class chatClient {
 	}
 	
 
-	private void handShakeFriend(String[] tokensMsg) {
-		if(tokensMsg[1].equalsIgnoreCase("successful")) {
+	private void handShakeFriend(String[] tokens) {
+		if(tokens[1].equalsIgnoreCase("successful")) {
 			for(SendFileListener listener: sendFileListener) {
-				listener.HandShake(tokensMsg);
+				listener.HandShake(tokens[2], tokens[3], tokens[4], tokens[5]);
 			}
 		}
 		

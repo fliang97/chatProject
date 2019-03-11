@@ -69,7 +69,7 @@ public class MainWindow extends JFrame implements AddFriendRequestListener, Send
 		
 		UserListPane userListPane = new UserListPane(this.client, login);
 		userListPane.setPreferredSize(new Dimension(400, 500));
-		this.setTitle("Users List of Account: " + this.login);
+		this.setTitle(login + "Users List");
 		this.setLayout(new FlowLayout());
 		JLabel friendList = new JLabel("online friend: ");
 		this.add(friendList);
