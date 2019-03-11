@@ -10,6 +10,7 @@ import java.util.ArrayList;
 public class GetClientInfoDB {
 	private String login;
 	private Connection conn;
+	private String profile;
 
 	public GetClientInfoDB(Connection conn) {
 		this.conn = conn;
@@ -37,6 +38,8 @@ public class GetClientInfoDB {
 		return this.login;
 	}
 	
+	
+	
 	public ArrayList<String> getAllFriendStatus(String account) throws SQLException{
 		ArrayList<String> friendList = new ArrayList<String>();
 		ArrayList<String> statusList = new ArrayList<String>();
@@ -63,5 +66,16 @@ public class GetClientInfoDB {
 		}
 		
 		return statusList;
+	}
+	public String getProfile(String account) throws SQLException{
+		Statement stmt5 = conn.createStatement();
+		String sql_getProfile = "SELECT Aid_3 FROM Profile WHERE Aid_1 = '" + account + "'";
+		ResultSet rs = stmt5.executeQuery(sql_getProfile);
+		while(rs.next()) {
+			this.profile = rs.getString("Aid_3");
+		}
+		
+		return this.profile;
+		
 	}
 }

@@ -29,7 +29,7 @@ public class chatClient {
 	private ArrayList<AllFriendStatusListener>  allFriendStatusListener = new ArrayList<>();
 	private ArrayList<AddFriendWindowListener>  addFriendWindowListener = new ArrayList<>();
 	private ArrayList<AddFriendRequestListener>  addFriendRequestListener = new ArrayList<>();
-	//private ArrayList<EditProfileListener> editProfileListener = new ArrayList<>();
+	private ArrayList<EditProfileListener> editProfileListener = new ArrayList<>();
 	
 	
 	
@@ -91,10 +91,10 @@ public class chatClient {
 			public void showWindow(String result) {}
 		});
 		
-//		client.addEditProfileListener(new EditProfileListener() {
-//			@Override
-//			public void showMegWindow(String result) {}
-//		});
+		client.addEditProfileListener(new EditProfileListener() {
+			@Override
+			public void showMsgWindow(String result) {}
+		});
 		
 		client.addAddFriendRequestListener(new AddFriendRequestListener(){
 			@Override
@@ -111,6 +111,7 @@ public class chatClient {
 		}
 	}
 	
+
 	public void msg(String sendTo, String message) throws IOException {
 		String cmd = "msg " + sendTo + " " + message + "\n"; 
 		serverOut.write(cmd.getBytes());
@@ -283,6 +284,10 @@ public class chatClient {
 	
 	public void addMessageListener(MessageListener listener) {
 		messageListeners.add(listener);
+	}
+	
+	public void addEditProfileListener(EditProfileListener listener) {
+		editProfileListener.add(listener);
 	}
 	
 	public void removeMessageListener(MessageListener listener) {

@@ -24,6 +24,7 @@ import DB.HandleGetFriendDB;
 import DB.HandleLogOffDB;
 import DB.LoginCheckDB;
 import DB.SignUpDB;
+import DB.HandleEditProfileDB;
 import Server.Server;
 
 
@@ -133,6 +134,9 @@ public class MultipleConnection extends Thread{
 				}else if("deleteFriend".equalsIgnoreCase(cmd)) {
 					handleDeleteFriend(tokens);
 				}
+				else if("editaccountinfo".equalsIgnoreCase(cmd)) {
+					handleEditProfile(tokens);
+				}
 				else{
 					String msg = "unkown" + cmd + "\n";
 					outputStream.write(msg.getBytes());
@@ -202,6 +206,12 @@ public class MultipleConnection extends Thread{
 		//HandleFriendOfflineDB hgfo = new HandleFriendOfflineDB(tokens, this.conn);
 		//String msg = "getfriendoffline " + hgfo.getUserName() + "\n";
 		//outputStream.write(msg.getBytes());
+	}
+	private void handleEditProfile(String[] tokens) throws IOException, SQLException{
+		GetClientInfoDB gci = new GetClientInfoDB(this.conn);
+		String profile = gci.getProfile(tokens[1]);
+		String msg = "Profile: " + profile + "\n";
+		outputStream.write(msg.getBytes());
 	}
 	
 

@@ -1,5 +1,5 @@
 package Listener;
 
 public interface EditProfileListener {
-	public void showMegWindow(String result);
+	public void showMsgWindow(String result);
 }
