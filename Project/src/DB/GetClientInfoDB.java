@@ -50,18 +50,50 @@ public class GetClientInfoDB {
 		}
 		
 		for(int i = 0; i < friendList.size(); i++) {
-			String sql_getStatus = "SELECT UserName, Status, Profile From ClientInfo WHERE Aid = '" + friendList.get(i) + "'";
+			String sql_getStatus = "SELECT UserName, Status, Profile, Nation From ClientInfo WHERE Aid = '" + friendList.get(i) + "'";
 			ResultSet rs2 = stmt4.executeQuery(sql_getStatus);
 			while(rs2.next()) {
 				if(rs2.getString("Status").equals("1")) {
-					statusList.add("online  " + rs2.getString("UserName") + "  " + rs2.getString("Profile"));
+					statusList.add("online  " + rs2.getString("UserName") + "  " + rs2.getString("Nation") + "  " + rs2.getString("Profile"));
 				}else if(rs2.getString("Status").equals("0")) {
-					statusList.add("offline  " + rs2.getString("UserName") + "  " + rs2.getString("Profile"));
+					statusList.add("offline  " + rs2.getString("UserName") + "  " + rs2.getString("Nation") + "  " + rs2.getString("Profile"));
 				}
 					
 			}
 		}
 		
 		return statusList;
+	}
+	
+	public String getNation(String Aid) {
+		Statement stmt5;
+		try {
+			stmt5 = conn.createStatement();
+			String sql_getUserName = "SELECT * FROM ClientInfo WHERE Aid = '" + Aid + "'";
+			ResultSet rs = stmt5.executeQuery(sql_getUserName);
+			while(rs.next()) {
+				this.login = rs.getString("Nation");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return this.login;
+	}
+	
+	public String getPrefLang(String Aid) {
+		Statement stmt6;
+		try {
+			stmt6 = conn.createStatement();
+			String sql_getUserName = "SELECT * FROM ClientInfo WHERE Aid = '" + Aid + "'";
+			ResultSet rs = stmt6.executeQuery(sql_getUserName);
+			while(rs.next()) {
+				this.login = rs.getString("PrefLang");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return this.login;
 	}
 }

@@ -16,6 +16,7 @@ import Server.MultipleConnection;
 public class Server extends Thread{
 	private final int serverPort;
 	private ArrayList<MultipleConnection> connectionList = new ArrayList<>();
+	private ArrayList<MultipleConnection> handShakeGroup = new ArrayList<>();
 	
 	private Connection conn;
 	private Statement stmt;
@@ -39,6 +40,10 @@ public class Server extends Thread{
 		}
 	}
 	
+	public ArrayList<MultipleConnection> getHandShakeGroup(){
+		return this.handShakeGroup;
+	}
+	
 	public Connection getConn() {
 		return this.conn;
 	}
@@ -47,7 +52,7 @@ public class Server extends Thread{
 		return this.stmt;
 	}
 	
-	public List<MultipleConnection> getConnectionList(){
+	public ArrayList<MultipleConnection> getConnectionList(){
 		return connectionList;
 	}
 	
@@ -55,11 +60,12 @@ public class Server extends Thread{
 	public void run() {
 		try {
 			ServerSocket serverSocket = new ServerSocket(serverPort);
+			ServerSocket serverFileSocket = new ServerSocket(8000);
 			while(true) {
 				System.out.println("about to accept connection");
 				Socket clientSocket = serverSocket.accept();
 				System.out.println("Accepted connection from " + clientSocket);
-				MultipleConnection mc = new MultipleConnection(this, clientSocket, conn, stmt);
+				MultipleConnection mc = new MultipleConnection(this, clientSocket, conn, stmt, serverFileSocket );
 				connectionList.add(mc);
 				mc.start();
 			} 
@@ -68,8 +74,15 @@ public class Server extends Thread{
 		}
 	}
 
+	public void removeHandShakeMember(MultipleConnection multipleConnection) {
+		this.handShakeGroup.remove(multipleConnection);
+	}
+	
+	public void removeHandShakeMember(int index) {
+		this.handShakeGroup.remove(index);
+	}
+	
 	public void removeWorker(MultipleConnection multipleConnection) {
-		connectionList.remove(multipleConnection);
-		
+		connectionList.remove(multipleConnection);	
 	}
 }

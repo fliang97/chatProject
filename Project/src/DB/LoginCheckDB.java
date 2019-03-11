@@ -74,7 +74,7 @@ public class LoginCheckDB {
 			while(rs3.next()) {
 				if(rs3.getString("Aid").equals(login)){
 					if(rs3.getString("Status").equals("1")) {
-						rs3.close();
+						//rs3.close();
 						result = false;
 					}
 				}

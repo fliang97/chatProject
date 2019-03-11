@@ -1,0 +1,89 @@
+package Monitor;
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.HeadlessException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.sql.*;
+
+import javax.swing.*;
+
+import org.apache.commons.lang3.StringUtils;
+
+import clientProject.LoginWindow;
+import clientProject.UserListPane;
+import clientProject.chatClient;
+import GUI.MainWindow;
+import GUI.SignUpWindow;
+
+
+public class LoginMonitor extends JFrame implements ActionListener{
+	private LoginWindow loginWindow;
+	private chatClient client;
+	private Connection conn = null;
+	private Statement stmt = null;
+	
+	public Connection getConn() {
+		return conn;
+	}
+	
+	public Statement getStmt() {
+		return stmt;
+	}
+	
+	public LoginMonitor(LoginWindow loginWindow, chatClient client) {
+		this.loginWindow  = loginWindow;
+		this.client = client;
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {	
+		int command = Integer.parseInt(e.getActionCommand());
+		switch(command) {
+		case 1:
+			
+			try {
+				doLogin();
+			} catch (HeadlessException | InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			break;
+			
+		case 2:
+			this.loginWindow.setVisible(false);
+			SignUpWindow suw = new SignUpWindow();
+			suw.launchSignUpWindow(client);
+			break;
+		}
+
+
+		
+	}
+
+	private void doLogin() throws HeadlessException, InterruptedException {
+		
+		String login = this.loginWindow.getLoginField().getText();
+		String password = this.loginWindow.getJPasswordField().getText();	
+		
+		try {
+			if(client.login(login, password)) {
+				MainWindow mw = new MainWindow(this.loginWindow, client, login);
+				mw.launchMainWindow();
+			}else {
+				//show err message
+				JOptionPane.showMessageDialog(this, "Invalid login/password");
+			}
+		}catch(IOException e) {
+			e.printStackTrace();
+		}	
+	}
+	
+	
+
+}

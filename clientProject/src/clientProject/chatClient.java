@@ -121,7 +121,7 @@ public class chatClient {
 		
 		client.addMessageGroupListener(new MessageGroupListener() {
 			@Override
-			public void onMessage(String fromLogin, String userName, String msgBody) {}
+			public void onMessage(String fromLogin, String toLogin, String msgBody, String userName) {}
 		});
 		
 		client.addSendFileListener(new SendFileListener() {
@@ -131,6 +131,10 @@ public class chatClient {
 			public void returnFileRequest(String[] tokens) {}
 			@Override 
 			public void startSendFile() {}
+			@Override
+			public void startReceiveFile(String[] tokens) {}
+			@Override
+			public void HandShake(String UserName, String Nation, String PrefLang, String aid) {}
 		});
 		
 		
@@ -218,15 +222,23 @@ public class chatClient {
 					}else if("offline".equalsIgnoreCase(cmd)) {
 						handleOffline(tokens);
 					}else if("msg".equalsIgnoreCase(cmd)) {
-						System.out.println("received message");
+						/*System.out.println("received message");
 						String[] tokensMsg = StringUtils.split(line, null, 4);
-						handleMessage(tokensMsg);
+						handleMessage(tokensMsg);*/	
+						boolean isTopic = tokens[1].charAt(0) == '#';
+						if(isTopic) {
+							String[] tokensMsg = StringUtils.split(line, null, 5);
+							handleMessage(tokensMsg);
+						}else {
+							String[] tokensMsg = StringUtils.split(line, null, 4);
+							handleMessage(tokensMsg);
+						}
 					}else if("succeed".equalsIgnoreCase(cmd)) {
 						break;
 					}else if("getfriendoffline".equalsIgnoreCase(cmd)) {
 						this.result = tokens[1];
 					}else if("allfriendstatus".equalsIgnoreCase(cmd)) {
-						String[] tokensMsg = StringUtils.split(line, null, 4);
+						String[] tokensMsg = StringUtils.split(line, null, 5);
 						HandleAllFriendStatus(tokensMsg);
 					}else if("Addfriendresult".equalsIgnoreCase(cmd)) {
 						returnAddFriendResult(tokens);
@@ -248,6 +260,10 @@ public class chatClient {
 						promtConfirmFileWindow(tokens);
 					}else if("sendrequestconfirm".equalsIgnoreCase(cmd)) {
 						startSendFile();
+					}else if("readytosendfile".equalsIgnoreCase(cmd)) {
+						startReceiveFile(tokens);
+					}else if("handshakefriend".equalsIgnoreCase(cmd)) {
+						handShakeFriend(tokens);
 					}
 				}
 			}
@@ -261,6 +277,21 @@ public class chatClient {
 		}
 	}
 	
+
+	private void handShakeFriend(String[] tokens) {
+		if(tokens[1].equalsIgnoreCase("successful")) {
+			for(SendFileListener listener: sendFileListener) {
+				listener.HandShake(tokens[2], tokens[3], tokens[4], tokens[5]);
+			}
+		}
+		
+	}
+
+	private void startReceiveFile(String[] tokens) {
+		for(SendFileListener listener: sendFileListener) {
+			listener.startReceiveFile(tokens);
+		}
+	}
 
 	private void startSendFile() {
 		for(SendFileListener listener: sendFileListener) {
@@ -340,7 +371,7 @@ public class chatClient {
 	private void HandleAllFriendStatus(String[] tokensMsg) {
 		// TODO Auto-generated method stub
 		String login = tokensMsg[1];
-		login = login + " " + tokensMsg[2] + " " + tokensMsg[3];
+		login = login + " " + tokensMsg[2] + " " + tokensMsg[3] + " " + tokensMsg[4];
 		System.out.println("login: " + login);
 		System.out.println("AllFriendStatus size: " + allFriendStatusListener.size());
 		for(AllFriendStatusListener listener : allFriendStatusListener) {
@@ -353,12 +384,14 @@ public class chatClient {
 		String login = tokensMsg[1];
 		String userName = tokensMsg[2];
 		String msg = tokensMsg[3];
-		//String msg = tokensMsg[2];
+		
 		
 		boolean isTopic = login.charAt(0) == '#';
 		if(isTopic) {
+			msg = tokensMsg[4];
+			String realName = tokensMsg[3];
 			for(MessageGroupListener listener : messageGroupListener) {
-				listener.onMessage(login, userName, msg);
+				listener.onMessage(login, userName, msg, realName);
 			}
 		}
 		else {

@@ -1,7 +1,10 @@
 package Server;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,6 +19,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.*;
 
@@ -42,16 +47,22 @@ public class MultipleConnection extends Thread{
 	private HashSet<String> topicSet = new HashSet<>();
 	private Connection conn;
 	private Statement stmt;
+	private ServerSocket fileSocket;
+	private String userName = null;
+	private String nation = null;
+	private String PrefLang = null;
+	
 	
 	MultipleConnection(Socket clientSocket){
 		this.clientSocket = clientSocket;
 	}
 	
-	public MultipleConnection(Server server, Socket clientSocket, Connection conn, Statement stmt) {
+	public MultipleConnection(Server server, Socket clientSocket, Connection conn, Statement stmt, ServerSocket fileSocket) {
 		this.server = server;
 		this.clientSocket = clientSocket;
 		this.conn = conn;
 		this.stmt = stmt;
+		this.fileSocket = fileSocket;
 	}
 	
 	public String getLogin() {
@@ -152,7 +163,7 @@ public class MultipleConnection extends Thread{
 				}else if("allfriendstatus".equalsIgnoreCase(cmd)) {
 					handleAllFriendStatus(tokens);
 				}else if("addfriend".equalsIgnoreCase(cmd)) {
-					handleAddFriend(tokens);
+						handleAddFriend(tokens);
 				}else if("becomefriend".equalsIgnoreCase(cmd)) {
 					handleBecomeFriend(tokens);
 				}else if("deleteFriend".equalsIgnoreCase(cmd)) {
@@ -173,6 +184,8 @@ public class MultipleConnection extends Thread{
 						sendBackRequest(tokens);
 				}else if("confirmsend".equalsIgnoreCase(cmd)) {
 					catchFileFromClient(tokens);
+				}else if("handShake".equalsIgnoreCase(cmd)) {
+					handShakeNow(tokens[1]);
 				}
 				else{
 					String msg = "unkown " + cmd + "\n";
@@ -185,61 +198,55 @@ public class MultipleConnection extends Thread{
 		//clientSocket.close();
 	}
 	
-	private void catchFileFromClient(String[] tokens) throws IOException {
-		
-		
-		int SOCKET_PORT = 8000;
-		int bytesRead;
-	    int current = 0;
-	    FileOutputStream fos = null;
-	    BufferedOutputStream bos = null;
-	    ServerSocket servsock = null;
-	    Socket sock = null;
-	    int FILE_SIZE = 95551830;
-	    String fileName = "sentfrom" + tokens[2] + "to" + tokens[1] + tokens[3];
-	    String FILE_TO_RECEIVED = "/Users/liangfujie/Downloads/cs176b/Server_Receive/" + fileName;
-	    
-
-	    try {
-	        servsock = new ServerSocket(SOCKET_PORT);
-	        
-		    String msg = "sendrequestconfirm\n";
-		    List<MultipleConnection> connectionList = server.getConnectionList();
-			for(MultipleConnection mc : connectionList) {
-				if(mc.getLogin().equalsIgnoreCase(tokens[2])) {
-					mc.send(msg);
-				}
+	private void handShakeNow(String login) throws InterruptedException, SQLException {
+		server.getHandShakeGroup().add(this);
+		int size = server.getHandShakeGroup().size();
+		Random rand = new Random(); 
+		int random = rand.nextInt(size); 
+		long t1 = System.currentTimeMillis();
+		boolean result = true;
+		while(server.getHandShakeGroup().get(random).getLogin().equalsIgnoreCase(login)) {
+			long t2 = System.currentTimeMillis();
+			if(t2-t1 > 2){
+				result = false;
+				break;
+			}else {
+				random = rand.nextInt(size);
 			}
-	        
-	            sock = servsock.accept(); // new
-	        
-	            System.out.println("Connecting...");
+		}
+		GetClientInfoDB gci = new GetClientInfoDB(this.conn);
+		String aid = server.getHandShakeGroup().get(random).getLogin();
+		String friend = gci.getuserName(server.getHandShakeGroup().get(random).getLogin());
+		String nation = gci.getNation(server.getHandShakeGroup().get(random).getLogin());
+		String prefLang = gci.getPrefLang(server.getHandShakeGroup().get(random).getLogin());
+		String msg = null;
+		if(!result) msg = "handshakefriend failed\n";
+		else {
+			msg = "handshakefriend successful " + friend + " " + nation + " " + prefLang + " " + aid + "\n";
+		}
+		try {
+			outputStream.write(msg.getBytes());
+		}catch(IOException e) {
+			e.printStackTrace();
+		}
+		TimeUnit.SECONDS.sleep(2);
+		server.getHandShakeGroup().remove(this);
+		System.out.println(msg);
+		
+	}
 
-	            byte [] mybytearray  = new byte [FILE_SIZE];
-	            InputStream is = sock.getInputStream();
-	            fos = new FileOutputStream(FILE_TO_RECEIVED);
-	            bos = new BufferedOutputStream(fos);
-	            bytesRead = is.read(mybytearray,0,mybytearray.length);
-	            current = bytesRead;
-
-	            do {
-	                bytesRead =
-	                is.read(mybytearray, current, (mybytearray.length-current));
-	          if(bytesRead >= 0) current += bytesRead;
-	            }while(bytesRead > -1);
-
-	            bos.write(mybytearray, 0 , current);
-	            bos.flush();
-	            System.out.println("File " + FILE_TO_RECEIVED
-	          + " downloaded (" + current + " bytes read)");
-	        
-	    }catch(Exception e){
-	    	e.printStackTrace();
-	    }finally {
-	        if (fos != null) fos.close();
-	        if (bos != null) bos.close();
-	        if (sock != null) sock.close();
-	      }
+	private void catchFileFromClient(String[] tokens) throws IOException {		
+		FileServer fs = new FileServer(tokens, this.fileSocket, this.server);
+		boolean result = fs.receiveFile();
+		if(result){
+			String msg = "readytosendfile " + tokens[3] + "\n";
+			List<MultipleConnection> connectionList = server.getConnectionList();
+			for(MultipleConnection mc : connectionList) {
+				if(mc.getLogin().equalsIgnoreCase(tokens[1]))
+					mc.send(msg);
+			}
+		}
+	    result = fs.sendFile();
 	    
 	}
 
@@ -250,8 +257,9 @@ public class MultipleConnection extends Thread{
 		String toAccount = gci.getLogin(tokens[1]);
 		String outSendToMsg = "sendfiletoyou " + FromuserName + " " + tokens[2] + " " + tokens[3] + "\n";
 		
-		List<MultipleConnection> connectionList = server.getConnectionList();
+		ArrayList<MultipleConnection> connectionList = server.getConnectionList();
 		for(MultipleConnection mc : connectionList) {
+			System.out.println("login is " + mc.getLogin());
 			if(mc.getLogin().equalsIgnoreCase(toAccount)) {
 				mc.send(outSendToMsg);
 			}
@@ -446,7 +454,7 @@ public class MultipleConnection extends Thread{
 				if(mc.isMemberOfTopic(sendTo)) {
 
 				
-					String outMsg = "msg " + sendTo + " " + login + " " + body + "\n";
+					String outMsg = "msg " + sendTo + " " + login  + " " + this.userName + " " + body + "\n";
 					mc.send(outMsg);
 				}
 			}else {
@@ -454,7 +462,6 @@ public class MultipleConnection extends Thread{
 				String login_1 = gci.getLogin(sendTo);
 				String sendFrom = gci.getuserName(login);
 				if(login_1.equalsIgnoreCase(mc.getLogin())) {
-					System.out.println("3");
 					String outMsg = "msg " + login_1 + " " + sendFrom + " " + body + "\n";
 					System.out.println(outMsg);
 					mc.send(outMsg);
@@ -474,10 +481,19 @@ public class MultipleConnection extends Thread{
 				String msg = "ok login\n";
 				outputStream.write(msg.getBytes());
 				this.login = login;
+				GetClientInfoDB gci = new GetClientInfoDB(this.conn);
+				this.userName = gci.getuserName(login);
+				this.nation = gci.getNation(login);
+				this.PrefLang = gci.getPrefLang(login);
 				System.out.println("User logged in successfully: + " + login);
 				
 				List<MultipleConnection> connectionList = server.getConnectionList();
 				
+				try {
+					TimeUnit.SECONDS.sleep(1);
+				}catch(Exception e) {
+					e.printStackTrace();
+				}
 				//send current user all other online users
 				for(MultipleConnection mc : connectionList ) {
 					if(mc.getLogin() != null) {

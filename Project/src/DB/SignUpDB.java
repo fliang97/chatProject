@@ -20,11 +20,13 @@ public class SignUpDB {
 	public int signUp() throws SQLException {
 		int result = 0;
 
-		if(tokens.length == 5) {
+		//if(tokens.length == 5) {
 			String account = tokens[1];
 			String password = tokens[2];
 			String userName = tokens[3];
 			String profile = tokens[4];
+			String nation = tokens[5];
+			String prefLang = tokens[6];
 			String sql_getAccount = "SELECT Aid FROM ClientInfo";
 			ResultSet rs = stmt.executeQuery(sql_getAccount);
 			int outbreak = 0;
@@ -39,12 +41,12 @@ public class SignUpDB {
 			}
 		
 		
-			String sql_sign_up = "INSERT INTO ClientInfo (Aid , Password, Status, UserName, Profile) VALUES ('" + account + "', '" + password + "', '0' ,'" + userName + "','" + profile + "')";
+			String sql_sign_up = "INSERT INTO ClientInfo (Aid , Password, Status, UserName, Profile, Nation, PrefLang) VALUES ('" + account + "', '" + password + "', '0' ,'" + userName + "', '" + profile + "', '" + nation + "', '" + prefLang + "')";
 			PreparedStatement insert = conn.prepareStatement(sql_sign_up);
 			insert.executeUpdate();
 			
 			result = 1;
-		}
+		//}
 		
 		
 		return result;

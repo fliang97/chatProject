@@ -1,0 +1,55 @@
+package Server;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.Socket;
+import java.sql.SQLException;
+
+import org.apache.commons.lang3.StringUtils;
+
+public class MultipleFileConnection extends Thread{
+	private Socket clientSocket;
+	private Server server;
+	private OutputStream outputStream;
+
+	public MultipleFileConnection(Server server, Socket clientSocket) {
+		this.server = server;
+		this.clientSocket = clientSocket;
+	}
+	
+	@Override
+	public void run() {
+		try {
+			enabledMultipleConnection();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void enabledMultipleConnection() throws IOException, InterruptedException, SQLException {
+		InputStream inputStream = clientSocket.getInputStream();
+		this.outputStream = clientSocket.getOutputStream();
+		
+		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+		String input;
+		while( (input = reader.readLine()) != null) {
+			//input = decipherMsg(input);
+					
+			System.out.println(input);
+			String[] tokens = StringUtils.split(input);
+			if(tokens != null && tokens.length > 0) {
+				String cmd = tokens[0];
+			}
+		}
+	}
+
+	private OutputStream outputStream;
+}

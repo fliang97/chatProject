@@ -85,7 +85,7 @@ public class GroupListPane extends JPanel implements GroupListListener{
 		}else {
 			JOptionPane.showMessageDialog(this, "Server is busy!\n Please Try Again.");
 		}
-	}
+	}	
 	
 	@Override 
 	public void showLeaveGroupResult(String result, String groupName) {

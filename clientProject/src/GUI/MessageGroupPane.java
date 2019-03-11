@@ -54,9 +54,9 @@ public class MessageGroupPane extends JPanel implements MessageGroupListener{
 	}
 	
 	@Override
-	public void onMessage(String fromLogin, String userName, String msgBody) {
+	public void onMessage(String fromLogin, String toLogin, String msgBody, String userName) {
 		if(groupName.equalsIgnoreCase(fromLogin)) {
-			if(!userName.equalsIgnoreCase(this.login)) {
+			if(!toLogin.equalsIgnoreCase(this.login)) {
 				String line = userName + ": " + msgBody;
 				listModel.addElement(line);
 			}

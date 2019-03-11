@@ -36,8 +36,10 @@ public class SignUpMonitor implements ActionListener{
 			String password = swu.getPassword().getText();
 			String userName = swu.getUserName().getText();
 			String profile = swu.getProfile().getText();
+			String nation = swu.getNation().getText();
+			String prefLang = swu.getPrefLang().getText();
 			
-			String tokens = "signup " + account + " " + password + " " + userName + " " + profile + "\n";
+			String tokens = "signup " + account + " " + password + " " + userName + " " + profile + " " + nation + " " + prefLang + "\n";
 			try {
 				this.client.getOutputStream().write(tokens.getBytes());
 			} catch (IOException e1) {

@@ -18,6 +18,8 @@ public class SignUpWindow extends JFrame{
 	private JTextField password;
 	private JTextField userName;
 	private JTextField profile;
+	private JTextField nation;
+	private JTextField PrefLang;
 	
 	public JTextField getAccount() {
 		return account;
@@ -35,11 +37,19 @@ public class SignUpWindow extends JFrame{
 		return profile;
 	}
 	
+	public JTextField getNation() {
+		return nation;
+	}
+	
+	public JTextField getPrefLang() {
+		return PrefLang;
+	}
+	
 	public void launchSignUpWindow(chatClient client) {
 		this.getContentPane().setLayout(new BoxLayout(this.getContentPane(),BoxLayout.Y_AXIS));
 		this.setTitle("chatMate");
 		this.setLayout(new FlowLayout());
-		this.setSize(200, 270);
+		this.setSize(200, 340);
 		this.setResizable(false);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setLocationRelativeTo(null);
@@ -64,6 +74,17 @@ public class SignUpWindow extends JFrame{
 		this.add(userName);
 		this.add(profileLabel);
 		this.add(profile);
+		JLabel nationLabel = new JLabel("Your Country: ");
+		this.nation = new JTextField();
+		this.nation.setPreferredSize(dim);
+		this.add(nationLabel);
+		this.add(nation);
+		JLabel PrefLangLabel = new JLabel("Prefer Language: ");
+		this.add(PrefLangLabel);
+		this.PrefLang = new JTextField();
+		this.PrefLang.setPreferredSize(dim);
+		this.add(PrefLang);
+		
 		
 		JButton signUp = new JButton("Confirm");
 		SignUpMonitor sum = new SignUpMonitor(this, client);
